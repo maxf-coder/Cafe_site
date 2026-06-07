@@ -1,7 +1,6 @@
 import uuid
 from django.db import models
 
-
 class SiteSettings(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     key = models.CharField(max_length=50, unique=True)
@@ -16,7 +15,6 @@ class SiteSettings(models.Model):
     def __str__(self):
         return self.key
     
-
 class Page(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
@@ -28,7 +26,6 @@ class Page(models.Model):
     def __str__(self):
         return self.name
     
-
 class PageHero(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     page = models.OneToOneField(Page, on_delete=models.CASCADE, related_name="hero")
@@ -42,7 +39,6 @@ class PageHero(models.Model):
     def __str__(self):
         return f"Hero for {self.page.name}"
     
-
 class PageSection(models.Model):
     SECTION_TYPES = [
         ("wide_image", "Wide Image"),
