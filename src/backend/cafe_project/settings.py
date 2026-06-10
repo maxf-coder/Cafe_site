@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django_summernote",
     "menu",
     "core",
+    "adminsortable2"
 ]
 
 MIDDLEWARE = [
