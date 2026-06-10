@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "corsheaders",
+    "django_summernote",
     "menu",
     "core",
 ]
@@ -118,7 +119,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / "static"
 
-CORS_ALLOWE_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(',')
+CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173").split(',')
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+SUMMERNOTE_CONFIG = {
+    'width': '100%',
+    'height': 300,
+}

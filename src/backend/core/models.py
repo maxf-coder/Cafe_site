@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from django_summernote.fields import SummernoteTextField
 
 class SiteSettings(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -40,18 +41,9 @@ class PageHero(models.Model):
         return f"Hero for {self.page.name}"
     
 class PageSection(models.Model):
-    SECTION_TYPES = [
-        ("wide_image", "Wide Image"),
-        ("tight_image", "Tight Image"),
-        ("video", "Video"),
-        ("reels", "Reels Carousel"),
-    ]
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="sections")
-    section_type = models.CharField(max_length=20, choices=SECTION_TYPES)
     sort_order = models.PositiveIntegerField(default=0)
-    content = models.JSONField()
     is_published = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -60,4 +52,67 @@ class PageSection(models.Model):
         ordering = ["sort_order"]
 
     def __str__(self):
-        return f"{self.section_type} - {self.page.name}"
+        return f"{self.__class__.__name__} - {self.page.name}"
+    
+
+class WideImageSection(PageSection):
+    title = models.CharField(max_length=200)
+    short_description = models.TextField(max_length=300)
+    full_description = SummernoteTextField()
+    image = models.ImageField(upload_to="sections/wide_image/", null=True, blank=True)
+    alt_text = models.CharField(max_length=200, blank=True, default="")
+
+    def __str__(self):
+        return f"Wide Image - {self.title}"
+
+
+class VideoSection(PageSection):
+    title = models.CharField(max_length=200)
+    video_url = models.URLField()
+    description = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return f"Video - {self.title}" 
+    
+
+class TightImageSection(PageSection):
+    title = models.CharField(max_length=200, blank=True, default='')
+
+    def __str__(self):
+        return f"Tight Image - {self.title}"
+    
+
+class TightImageCard(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    section = models.ForeignKey(TightImageSection, on_delete=models.CASCADE, related_name="cards")
+    title = models.CharField(max_length=200)
+    short_description = models.TextField(max_length=300)
+    full_description = SummernoteTextField()
+    image = models.ImageField(upload_to="sections/tight_image/", null=True, blank=True)
+    alt_text = models.CharField(max_length=200, blank=True, default="")
+    sort_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["sort_order"]
+
+    def __str__(self):
+        return self.title
+
+
+class ReelsSection(PageSection):
+    title = models.CharField(max_length=200, blank=True, default="")
+
+    def __str__(self):
+        return f"Reels - {self.title}"
+    
+
+class ReelItem(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    section = models.ForeignKey(ReelsSection, on_delete=models.CASCADE, related_name="reels")
+    video_url = models.URLField()
+    sort_order = models.PositiveIntegerField(default=0)
+    class Meta:
+        ordering = ["sort_order"]
+
+    def __str__(self):
+        return f'Reel - {self.sort_order}'
