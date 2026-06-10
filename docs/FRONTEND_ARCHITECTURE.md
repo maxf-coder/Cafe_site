@@ -1,5 +1,8 @@
 # Frontend Architecture
 
+> **⚠️ NOT YET IMPLEMENTED — Target architecture for when the React frontend is built.**
+> Currently no `src/frontend/` directory exists. This document is a planning reference.
+
 ## Project Structure
 
 ```

@@ -109,29 +109,100 @@ Hero section for a page. One hero per page.
 
 ### PageSection
 
-Modular content block within a page.
+Base model for modular content blocks. Uses **multi-table inheritance** — each section type has its own table with type-specific fields, sharing the base `PageSection` fields (page, sort_order, is_published).
 
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
 | `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
 | `page` | ForeignKey(Page) | on_delete=CASCADE, related_name='sections' | Parent page |
-| `section_type` | CharField(20) | Required, choices | Type of section |
 | `sort_order` | PositiveIntegerField | Default: 0 | Display order on page |
-| `content` | JSONField | Required | Section-specific content |
 | `is_published` | BooleanField | Default: True | Show/hide section |
 | `created_at` | DateTimeField | Auto | Creation timestamp |
 | `updated_at` | DateTimeField | Auto | Last update timestamp |
 
 **Meta:** `ordering = ['sort_order']`
 
-**Section Types:**
+**Child models (inherit from PageSection):**
 
-| Type | Value |
-|------|-------|
-| Wide Image | `wide_image` |
-| Tight Image Grid | `tight_image` |
-| Video | `video` |
-| Reels Carousel | `reels` |
+---
+
+### WideImageSection
+
+Full-width image with title, description, and expandable rich text.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
+| `title` | CharField(200) | Required | Section heading |
+| `short_description` | TextField(300) | Required | Truncated preview text |
+| `full_description` | SummernoteTextField | Required | Rich text with HTML formatting |
+| `image` | ImageField | Nullable, upload_to='sections/wide_image/' | Full-width background image |
+| `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
+
+---
+
+### VideoSection
+
+Embedded video (YouTube/Vimeo) with title and description.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
+| `title` | CharField(200) | Required | Section heading |
+| `video_url` | URLField | Required | Embed URL for video |
+| `description` | TextField | Blank | Caption below video |
+
+---
+
+### TightImageSection
+
+Grid of image cards. Contains child `TightImageCard` records.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
+| `title` | CharField(200) | Blank, Default: '' | Optional section heading |
+
+#### TightImageCard
+
+Individual card within a `TightImageSection` grid.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
+| `section` | ForeignKey(TightImageSection) | on_delete=CASCADE, related_name='cards' | Parent section |
+| `title` | CharField(200) | Required | Card heading |
+| `short_description` | TextField(300) | Required | Truncated preview text |
+| `full_description` | SummernoteTextField | Required | Rich text with HTML formatting |
+| `image` | ImageField | Nullable, upload_to='sections/tight_image/' | Card image |
+| `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
+| `sort_order` | PositiveIntegerField | Default: 0 | Display order within grid |
+
+**Meta:** `ordering = ['sort_order']`
+
+---
+
+### ReelsSection
+
+Horizontal carousel of short-form videos. Contains child `ReelItem` records.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
+| `title` | CharField(200) | Blank, Default: '' | Optional section heading |
+
+#### ReelItem
+
+Individual video within a `ReelsSection` carousel.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
+| `section` | ForeignKey(ReelsSection) | on_delete=CASCADE, related_name='reels' | Parent section |
+| `video_url` | URLField | Required | Short-form video URL |
+| `sort_order` | PositiveIntegerField | Default: 0 | Display order in carousel |
+
+**Meta:** `ordering = ['sort_order']`
 
 ---
 
@@ -139,7 +210,11 @@ Modular content block within a page.
 
 ```
 Page ──1:1── PageHero
-Page ──1:N── PageSection
+Page ──1:N── PageSection (parent)
+  ├── WideImageSection (multi-table inheritance)
+  ├── VideoSection (multi-table inheritance)
+  ├── TightImageSection ──1:N── TightImageCard
+  └── ReelsSection ──1:N── ReelItem
 
 MenuCategory ──1:N── MenuProduct
 
@@ -151,8 +226,10 @@ SiteSettings (standalone key-value store)
 ## Design Decisions
 
 1. **PageHero as OneToOne** - Each page has exactly one hero. Clean separation from Page model.
-2. **JSONB for PageSection content** - Flexible schema for different section types without creating separate tables.
+2. **Multi-table inheritance for sections** - Each section type gets its own database table with explicit typed fields (ImageField, SummernoteTextField, URLField). Replaces the earlier JSONB approach for better validation, admin UI, and query performance.
 3. **SiteSettings as key-value** - Simple, extensible. Adding a new setting requires no schema changes.
-4. **sort_order on both Category and Product** - Categories ordered in navbar, products ordered within their category.
+4. **sort_order on sortable models** - Categories, products, sections, cards, and reels all have explicit ordering.
 5. **is_active/is_published flags** - Hide content without deleting. Supports draft workflows.
 6. **alt_text on all image fields** - WCAG 2.1 AA accessibility compliance.
+7. **UUID primary keys** - Not predictable, safe for distributed systems and direct object access.
+8. **SummernoteTextField for rich text** - WYSIWYG editor in admin; stores HTML. MIT license, free for commercial use.

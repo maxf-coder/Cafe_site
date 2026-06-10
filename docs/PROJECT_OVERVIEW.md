@@ -38,35 +38,30 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 Cafe_site/
 ├── docs/                    # Project documentation
 ├── src/
-│   ├── backend/             # Django project
-│   │   ├── cafe_project/    # Django settings & config
-│   │   ├── menu/            # Menu app (categories, products)
-│   │   ├── core/            # Core app (pages, settings, sections)
-│   │   └── manage.py
-│   └── frontend/            # React application
-│       ├── src/
-│       │   ├── api/         # API client
-│       │   ├── components/  # Reusable UI components
-│       │   ├── hooks/       # Custom React hooks
-│       │   ├── lib/         # Utilities (i18n, query client)
-│       │   └── pages/       # Page components
-│       └── package.json
-└── README.md
+│   └── backend/             # Django project
+│       ├── cafe_project/    # Django settings & config
+│       ├── menu/            # Menu app (categories, products)
+│       ├── core/            # Core app (pages, settings, sections)
+│       └── manage.py
+│                              (frontend/ — not yet created)
+└── README.md                 (not yet created)
 ```
 
 ## Features
 
 ### In Scope
-- [x] Menu page with categories and product cards
-- [x] Product detail modal (click any card)
-- [x] About Us page (modular content sections)
-- [x] Outdoor Events page (modular content sections)
-- [x] Charity page (modular content sections)
-- [x] Language switcher (RO/EN/RU)
-- [x] Responsive navbar with phone CTA
-- [x] Footer with contact info, schedule, social links
-- [x] Django Admin panel for content management
-- [x] Site settings management (phone, email, address, etc.)
+- [ ] Menu page with categories and product cards (frontend not built)
+- [ ] Product detail modal (click any card)
+- [ ] About Us page (modular content sections)
+- [ ] Outdoor Events page (modular content sections)
+- [ ] Charity page (modular content sections)
+- [ ] Language switcher (RO/EN/RU)
+- [ ] Responsive navbar with phone CTA
+- [ ] Footer with contact info, schedule, social links
+- [x] Django Admin panel for content management (backend models + admin ready)
+- [x] Site settings key-value store (model + admin ready)
+
+**Status:** Backend (`src/backend/`) has models, admin, and migrations. API layer (serializers, views, URLs) and frontend are not yet built.
 
 ### Out of Scope
 - [ ] Online ordering or shopping cart
@@ -81,19 +76,21 @@ Cafe_site/
 
 ## Content Section Types
 
-All content pages (About, Events, Charity) use modular sections:
+All content pages (About, Events, Charity) use modular sections with **multi-table inheritance**:
 
-| Type | Description |
-|------|-------------|
-| **Wide Image** | Full-width image with title and expandable description |
-| **Tight Image Grid** | Grid of cards with images, titles, and expandable descriptions |
-| **Video** | Embedded YouTube/Vimeo video with title and description |
-| **Reels Carousel** | Horizontal scrollable carousel of short-form videos |
+| Type | Model | Description |
+|------|-------|-------------|
+| **Wide Image** | `WideImageSection` | Full-width image with title, description, expandable rich text |
+| **Tight Image Grid** | `TightImageSection` + `TightImageCard` | Grid of cards with images, titles, and expandable descriptions |
+| **Video** | `VideoSection` | Embedded YouTube/Vimeo video with title and description |
+| **Reels Carousel** | `ReelsSection` + `ReelItem` | Horizontal scrollable carousel of short-form videos |
 
-## Deployment
+All section types inherit from `PageSection` (base model with `page`, `sort_order`, `is_published`).
+
+## Deployment (Planned)
 
 - **Backend**: Django + Gunicorn on Render
 - **Frontend**: Built React app served as static site on Render
-- **Database**: Render PostgreSQL
-- **Media**: Cloudinary for image storage
-- **Environment Variables**: Managed via Render dashboard
+- **Database**: Render PostgreSQL (currently local PostgreSQL)
+- **Media**: Cloudinary for image storage (currently local `media/` folder)
+- **Environment Variables**: Managed via `.env` locally, Render dashboard in production

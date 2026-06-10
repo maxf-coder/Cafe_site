@@ -1,8 +1,12 @@
 # API Contract
 
+> **⚠️ NOT YET IMPLEMENTED — Target contract for when the API layer is built.**
+> The current `cafe_project/urls.py` only has `/admin/` and `/summernote/` routes.
+> `menu/views.py` and `core/views.py` are stubs. No serializers or API URL files exist yet.
+
 ## Overview
 
-The backend exposes 3 read-only API endpoints. All responses are JSON. No authentication required for public endpoints.
+The backend exposes read-only API endpoints. All responses are JSON. No authentication required.
 
 **Base URL (development):** `http://localhost:8000`
 
@@ -12,7 +16,7 @@ The backend exposes 3 read-only API endpoints. All responses are JSON. No authen
 
 ### 1. GET /api/menu/categories/
 
-Returns a lightweight list of menu categories for rendering the category navbar.
+Returns menu categories sorted by `sort_order`.
 
 **Response:**
 ```json
@@ -21,11 +25,6 @@ Returns a lightweight list of menu categories for rendering the category navbar.
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Aperitive",
     "slug": "aperitive"
-  },
-  {
-    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    "name": "Feluri Principale",
-    "slug": "feluri-principale"
   }
 ]
 ```
@@ -37,21 +36,19 @@ interface MenuCategory {
   name: string;
   slug: string;
 }
-
-// Response type: MenuCategory[]
 ```
 
 ---
 
 ### 2. GET /api/menu/products/
 
-Returns all active menu products. Frontend groups by `category_id`.
+Returns all active products. Frontend groups by `category_id`.
 
 **Response:**
 ```json
 [
   {
-    "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
     "category_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
     "name": "Bruschetta",
     "slug": "bruschetta",
@@ -59,7 +56,7 @@ Returns all active menu products. Frontend groups by `category_id`.
     "weight_g": 150,
     "short_description": "Pâine prăjită cu roșii și busuioc",
     "full_description": "Pâine prăjită cu roșii proaspete, busuioc, ulei de măsline și mozzarella.",
-    "image_url": "/media/menu/bruschetta.jpg",
+    "img_src": "/media/menu/bruschetta.jpg",
     "alt_text": "Bruschetta cu roșii și busuioc"
   }
 ]
@@ -76,18 +73,16 @@ interface MenuProduct {
   weight_g: number | null;
   short_description: string;
   full_description: string;
-  image_url: string | null;
+  img_src: string | null;
   alt_text: string;
 }
-
-// Response type: MenuProduct[]
 ```
 
 ---
 
 ### 3. GET /api/pages/{slug}/
 
-Returns a complete page with hero and all published sections.
+Returns a published page with hero and all published sections.
 
 **Request:** `GET /api/pages/despre-noi/`
 
@@ -99,23 +94,23 @@ Returns a complete page with hero and all published sections.
   "hero": {
     "main_text": "Povestea Noastră",
     "secondary_text": "Un loc unde gustul întâlnește comunitatea",
-    "image_url": "/media/heroes/about.jpg",
+    "img_src": "/media/heroes/about.jpg",
     "alt_text": "Echipa Fiesta Gastro Cafe"
   },
   "sections": [
     {
-      "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+      "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
       "type": "wide_image",
       "content": {
         "title": "Bine ați venit la Fiesta",
         "short_description": "Servim pasiune în fiecare farfurie.",
-        "full_description": "Fondată în 2020, Fiesta Gastro Cafe s-a născut din dorința de a aduce bucătăria mediteraneană în Chișinău.",
-        "image_url": "/media/sections/welcome.jpg",
+        "full_description": "<p>Fondată în 2020, Fiesta Gastro Cafe...</p>",
+        "image": "/media/sections/wide_image/welcome.jpg",
         "alt_text": "Interiorul cafenelei"
       }
     },
     {
-      "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+      "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
       "type": "tight_image",
       "content": {
         "title": "Echipa Noastră",
@@ -123,15 +118,15 @@ Returns a complete page with hero and all published sections.
           {
             "title": "Bucătar Maria",
             "short_description": "10 ani experiență în bucătăria italiană.",
-            "full_description": "Maria a studiat la Roma și a lucrat în restaurante cu stele Michelin.",
-            "image_url": "/media/sections/maria.jpg",
+            "full_description": "<p>Maria a studiat la Roma...</p>",
+            "image": "/media/sections/tight_image/maria.jpg",
             "alt_text": "Bucătarul Maria"
           }
         ]
       }
     },
     {
-      "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
+      "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
       "type": "video",
       "content": {
         "title": "În Spatele Scenei",
@@ -140,83 +135,18 @@ Returns a complete page with hero and all published sections.
       }
     },
     {
-      "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
+      "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
       "type": "reels",
       "content": {
         "title": "Clipuri Rapide",
         "reels": [
           {
-            "video_url": "https://www.youtube.com/shorts/xyz",
-            "caption": "Ingrediente proaspete zilnic"
+            "video_url": "https://www.youtube.com/shorts/xyz"
           }
         ]
       }
     }
   ]
-}
-```
-
-**TypeScript Interfaces:**
-```typescript
-interface PageHero {
-  main_text: string;
-  secondary_text: string;
-  image_url: string | null;
-  alt_text: string;
-}
-
-type SectionType = 'wide_image' | 'tight_image' | 'video' | 'reels';
-
-interface WideImageContent {
-  title: string;
-  short_description: string;
-  full_description: string;
-  image_url: string;
-  alt_text: string;
-}
-
-interface TightImageCard {
-  title: string;
-  short_description: string;
-  full_description: string;
-  image_url: string;
-  alt_text: string;
-}
-
-interface TightImageContent {
-  title: string;
-  cards: TightImageCard[];
-}
-
-interface VideoContent {
-  title: string;
-  video_url: string;
-  description: string;
-}
-
-interface ReelItem {
-  video_url: string;
-  caption: string;
-}
-
-interface ReelsContent {
-  title: string;
-  reels: ReelItem[];
-}
-
-type SectionContent = WideImageContent | TightImageContent | VideoContent | ReelsContent;
-
-interface PageSection {
-  id: string;
-  type: SectionType;
-  content: SectionContent;
-}
-
-interface PageResponse {
-  name: string;
-  slug: string;
-  hero: PageHero | null;
-  sections: PageSection[];
 }
 ```
 
@@ -231,7 +161,7 @@ interface PageResponse {
 
 ### 4. GET /api/settings/
 
-Returns global site settings (navbar, footer data).
+Returns all site settings as a flat JSON object.
 
 **Response:**
 ```json
@@ -265,20 +195,124 @@ interface SiteSettings {
 
 ---
 
+## TypeScript Interfaces
+
+### Page
+
+```typescript
+interface PageHero {
+  main_text: string;
+  secondary_text: string;
+  img_src: string | null;
+  alt_text: string;
+}
+
+// Section types
+type SectionType = 'wide_image' | 'tight_image' | 'video' | 'reels';
+
+interface WideImageContent {
+  title: string;
+  short_description: string;
+  full_description: string;
+  image: string;
+  alt_text: string;
+}
+
+interface TightImageCard {
+  title: string;
+  short_description: string;
+  full_description: string;
+  image: string;
+  alt_text: string;
+}
+
+interface TightImageContent {
+  title: string;
+  cards: TightImageCard[];
+}
+
+interface VideoContent {
+  title: string;
+  video_url: string;
+  description: string;
+}
+
+interface ReelItem {
+  video_url: string;
+}
+
+interface ReelsContent {
+  title: string;
+  reels: ReelItem[];
+}
+
+type SectionContent = WideImageContent | TightImageContent | VideoContent | ReelsContent;
+
+interface PageSection {
+  id: string;
+  type: SectionType;
+  content: SectionContent;
+}
+
+interface PageResponse {
+  name: string;
+  slug: string;
+  hero: PageHero | null;
+  sections: PageSection[];
+}
+```
+
+### Menu
+
+```typescript
+interface MenuCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+interface MenuProduct {
+  id: string;
+  category_id: string;
+  name: string;
+  slug: string;
+  price: string;
+  weight_g: number | null;
+  short_description: string;
+  full_description: string;
+  img_src: string | null;
+  alt_text: string;
+}
+```
+
+### Settings
+
+```typescript
+interface SiteSettings {
+  phone: string;
+  email: string;
+  address: string;
+  address_url: string;
+  schedule_weekdays: string;
+  schedule_weekends: string;
+  social_facebook: string | null;
+  social_instagram: string | null;
+  logo_url: string | null;
+}
+```
+
+---
+
 ## Error Responses
 
 ### 404 Not Found
 ```json
-{
-  "detail": "Not found."
-}
+{ "detail": "Not found." }
 ```
 
 ### 500 Internal Server Error
 ```json
-{
-  "detail": "A server error occurred."
-}
+{ "detail": "A server error occurred." }
 ```
 
 ---
@@ -297,28 +331,43 @@ interface SiteSettings {
 ## Frontend Usage Pattern
 
 ```typescript
-// Fetch categories first (navbar renders immediately)
 const { data: categories } = useQuery({
   queryKey: ['menu-categories'],
   queryFn: () => api.getMenuCategories(),
 });
 
-// Fetch products in parallel (grouped by category in UI)
 const { data: products } = useQuery({
   queryKey: ['menu-products'],
   queryFn: () => api.getMenuProducts(),
 });
 
-// Fetch page content
 const { data: page } = useQuery({
   queryKey: ['page', slug],
   queryFn: () => api.getPage(slug),
 });
 
-// Fetch settings once, cache forever
 const { data: settings } = useQuery({
   queryKey: ['settings'],
   queryFn: () => api.getSettings(),
   staleTime: Infinity,
 });
+```
+
+---
+
+## Section Rendering Pattern
+
+```tsx
+function SectionRenderer({ section }: { section: PageSection }) {
+  switch (section.type) {
+    case 'wide_image':
+      return <WideImageSection content={section.content as WideImageContent} />;
+    case 'tight_image':
+      return <TightImageGrid content={section.content as TightImageContent} />;
+    case 'video':
+      return <VideoSection content={section.content as VideoContent} />;
+    case 'reels':
+      return <ReelsCarousel content={section.content as ReelsContent} />;
+  }
+}
 ```

@@ -5,10 +5,8 @@
 ```
 src/backend/
 ├── .env                      # Environment variables (not committed)
-├── .env.example              # Template for environment variables
 ├── manage.py                 # Django CLI entry point
 ├── pyproject.toml            # Python dependencies
-├── uv.lock                   # Dependency lock file
 ├── cafe_project/             # Django project configuration
 │   ├── __init__.py
 │   ├── settings.py           # Main settings file
@@ -20,17 +18,19 @@ src/backend/
 │   ├── admin.py              # Django admin registration
 │   ├── apps.py               # App configuration
 │   ├── models.py             # MenuCategory, MenuProduct
-│   ├── serializers.py        # DRF serializers
-│   ├── urls.py               # Menu app URLs
-│   └── views.py              # API view classes
-└── core/                     # Core app (global functionality)
-    ├── __init__.py
-    ├── admin.py              # Django admin registration
-    ├── apps.py               # App configuration
-    ├── models.py             # Page, PageHero, PageSection, SiteSettings
-    ├── serializers.py        # DRF serializers
-    ├── urls.py               # Core app URLs
-    └── views.py              # API view classes
+│   ├── migrations/           # Database migrations
+│   │   └── 0001_initial.py
+│   └── views.py              # Stub (API not yet built)
+├── core/                     # Core app (global functionality)
+│   ├── __init__.py
+│   ├── admin.py              # Django admin registration
+│   ├── apps.py               # App configuration
+│   ├── models.py             # Page, PageHero, PageSection + 4 child section models
+│   ├── migrations/           # Database migrations
+│   │   ├── 0001_initial.py   # Old schema (section_type + JSONB)
+│   │   └── 0002_*.py         # Broken (references uninstalled ckeditor)
+│   └── views.py              # Stub (API not yet built)
+└── static/                   # Collected static files (gitignored)
 ```
 
 ---
@@ -44,10 +44,8 @@ src/backend/
 | File | Purpose |
 |------|---------|
 | `models.py` | `MenuCategory`, `MenuProduct` models |
-| `serializers.py` | JSON serialization for menu data |
-| `views.py` | API endpoints for categories and products |
-| `urls.py` | `/api/menu/categories/`, `/api/menu/products/` |
-| `admin.py` | Admin interface for menu management |
+| `admin.py` | Admin interface with `SortableAdminMixin` |
+| `views.py` | Stub (API not yet built) |
 
 ### `core` App
 
@@ -55,11 +53,9 @@ src/backend/
 
 | File | Purpose |
 |------|---------|
-| `models.py` | `Page`, `PageHero`, `PageSection`, `SiteSettings` models |
-| `serializers.py` | JSON serialization for page and settings data |
-| `views.py` | API endpoints for pages and settings |
-| `urls.py` | `/api/pages/{slug}/`, `/api/settings/` |
-| `admin.py` | Admin interface for content management |
+| `models.py` | `SiteSettings`, `Page`, `PageHero`, `PageSection` (base), `WideImageSection`, `VideoSection`, `TightImageSection` (+ `TightImageCard`), `ReelsSection` (+ `ReelItem`) |
+| `admin.py` | Admin interface for all models with `SortableAdminMixin` and `SortableTabularInline` |
+| `views.py` | Stub (API not yet built) |
 
 ---
 
@@ -69,21 +65,25 @@ src/backend/
 
 ```python
 INSTALLED_APPS = [
-    # Django built-in
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # Third-party
     'rest_framework',
     'corsheaders',
-    # Project apps
+    'django_summernote',
     'menu',
     'core',
+    'adminsortable2',
 ]
 ```
+
+**Notes:**
+- `django_summernote` — WYSIWYG editor for rich text fields (MIT license)
+- `adminsortable2` — Drag-and-drop reordering in admin
+- `corsheaders` — Must be placed early in MIDDLEWARE
 
 ### Middleware Chain
 
@@ -106,17 +106,17 @@ MIDDLEWARE = [
 
 ## Environment Variables
 
-| Variable | Type | Description |
-|----------|------|-------------|
-| `SECRET_KEY` | String | Django cryptographic key |
-| `DEBUG` | Boolean | Debug mode (True for development) |
-| `DATABASE_NAME` | String | PostgreSQL database name |
-| `DATABASE_USER` | String | PostgreSQL username |
-| `DATABASE_PASSWORD` | String | PostgreSQL password |
-| `DATABASE_HOST` | String | PostgreSQL host (localhost) |
-| `DATABASE_PORT` | String | PostgreSQL port (5432) |
-| `ALLOWED_HOSTS` | String | Comma-separated allowed domains |
-| `CORS_ALLOWED_ORIGINS` | String | Comma-separated allowed frontend origins |
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `SECRET_KEY` | String | — | Django cryptographic key |
+| `DEBUG` | Boolean | `False` | Debug mode (True for development) |
+| `DATABASE_NAME` | String | — | PostgreSQL database name |
+| `DATABASE_USER` | String | — | PostgreSQL username |
+| `DATABASE_PASSWORD` | String | — | PostgreSQL password |
+| `DATABASE_HOST` | String | `localhost` | PostgreSQL host |
+| `DATABASE_PORT` | String | `5432` | PostgreSQL port |
+| `ALLOWED_HOSTS` | String | `localhost,127.0.0.1` | Comma-separated allowed domains |
+| `CORS_ALLOWED_ORIGINS` | String | `http://localhost:5173` | Comma-separated allowed frontend origins |
 
 ---
 
@@ -124,20 +124,24 @@ MIDDLEWARE = [
 
 ```
 Root (cafe_project/urls.py)
-├── /api/menu/          → menu/urls.py
-│   ├── categories/     → MenuCategoryListView
-│   └── products/       → MenuProductListView
-├── /api/pages/         → core/urls.py
-│   └── <slug>/         → PageDetailView
-└── /api/settings/      → core/urls.py
-    └── /               → SiteSettingsView
+├── /admin/             → Django admin panel
+├── /summernote/        → Summernote editor uploads
+```
+
+**API routes not yet implemented.** Planned structure:
+
+```
+/api/menu/categories/   → (not built)
+/api/menu/products/     → (not built)
+/api/pages/<slug>/      → (not built)
+/api/settings/          → (not built)
 ```
 
 ---
 
 ## Authentication
 
-**Public API:** No authentication required. All endpoints are read-only.
+**Public API:** Not yet implemented. All planned endpoints are read-only, no authentication.
 
 **Admin Panel:** Django's built-in authentication. Single admin user for content management.
 
@@ -149,7 +153,7 @@ Root (cafe_project/urls.py)
 - Images stored in `media/` directory
 - Served via Django's static file handler (DEBUG=True)
 
-### Production (Render)
+### Production (Planned)
 - Images uploaded to Cloudinary
 - `django-cloudinary-storage` handles automatic upload
 - Database stores Cloudinary URLs
@@ -158,13 +162,4 @@ Root (cafe_project/urls.py)
 
 ## DRF Configuration
 
-```python
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    'DEFAULT_PAGINATION_CLASS': None,
-}
-```
-
-All endpoints return full responses without pagination (dataset is small).
+No custom DRF config in `settings.py` yet. To be added when API layer is built.
