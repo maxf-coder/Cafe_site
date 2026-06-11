@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from django_summernote.fields import SummernoteTextField
+from tinymce.models import HTMLField
 
 class SiteSettings(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -58,7 +58,7 @@ class PageSection(models.Model):
 class WideImageSection(PageSection):
     title = models.CharField(max_length=200)
     short_description = models.TextField(max_length=300)
-    full_description = SummernoteTextField()
+    full_description = HTMLField()
     image = models.ImageField(upload_to="sections/wide_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
 
@@ -87,7 +87,7 @@ class TightImageCard(models.Model):
     section = models.ForeignKey(TightImageSection, on_delete=models.CASCADE, related_name="cards")
     title = models.CharField(max_length=200)
     short_description = models.TextField(max_length=300)
-    full_description = SummernoteTextField()
+    full_description = HTMLField()
     image = models.ImageField(upload_to="sections/tight_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
     sort_order = models.PositiveIntegerField(default=0)

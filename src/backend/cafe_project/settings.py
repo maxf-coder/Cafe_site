@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "rest_framework",
     "corsheaders",
-    "django_summernote",
+    "tinymce",
     "menu",
     "core",
     "adminsortable2"
@@ -125,7 +125,17 @@ CORS_ALLOWED_ORIGINS = os.getenv("CORS_ALLOWED_ORIGINS", "http://localhost:5173"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-SUMMERNOTE_CONFIG = {
-    'width': '100%',
-    'height': 300,
+TINYMCE_DEFAULT_CONFIG = {
+    "height": 500,
+    "menubar": False,
+    "browser_spellcheck": True,
+    "plugins": "advlist,lists,link,table,help",
+    "toolbar": "undo redo | "
+               "bold italic underline | "
+               "forecolor backcolor | "
+               "alignleft aligncenter alignright alignjustify | "
+               "bullist numlist outdent indent | "
+               "table link | "
+               "fullscreen | "
+               "removeformat help",
 }

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from adminsortable2.admin import SortableAdminMixin, SortableTabularInline
+from adminsortable2.admin import SortableAdminMixin, SortableTabularInline, SortableStackedInline
 from .models import (
     SiteSettings,
     Page,
@@ -41,7 +41,7 @@ class VideoSectionAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_filter = ("page", )
 
 
-class TightImageCardInline(SortableTabularInline):
+class TightImageCardInline(SortableStackedInline):
     model = TightImageCard
     extra = 0
 
@@ -53,7 +53,7 @@ class TightImageSectionAdmin(SortableAdminMixin, admin.ModelAdmin):
     inlines = [TightImageCardInline]
 
 
-class ReelItemInline(SortableTabularInline):
+class ReelItemInline(SortableStackedInline):
     model = ReelItem
     extra = 0
 
