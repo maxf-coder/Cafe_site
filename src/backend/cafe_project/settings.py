@@ -129,7 +129,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "height": 500,
     "menubar": False,
     "browser_spellcheck": True,
-    "plugins": "advlist,lists,link,table,help",
+    "plugins": "advlist,lists,link,table,help,fullscreen",
     "toolbar": "undo redo | "
                "bold italic underline | "
                "forecolor backcolor | "

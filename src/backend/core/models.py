@@ -30,7 +30,7 @@ class Page(models.Model):
 class PageHero(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     page = models.OneToOneField(Page, on_delete=models.CASCADE, related_name="hero")
-    main_text = models.CharField(max_length=50)
+    main_text = models.CharField(max_length=50, blank=True, default="")
     secondary_text = models.CharField(max_length=150, blank=True, default="")
     img_src = models.ImageField(upload_to="heroes/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
@@ -56,9 +56,9 @@ class PageSection(models.Model):
     
 
 class WideImageSection(PageSection):
-    title = models.CharField(max_length=200)
-    short_description = models.TextField(max_length=300)
-    full_description = HTMLField()
+    title = models.CharField(max_length=200, blank=True, default="")
+    short_description = models.TextField(max_length=300, blank=True, default="")
+    full_description = HTMLField(blank=True, default="")
     image = models.ImageField(upload_to="sections/wide_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
 
@@ -67,7 +67,7 @@ class WideImageSection(PageSection):
 
 
 class VideoSection(PageSection):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, blank=True, default="")
     video_url = models.URLField()
     description = models.TextField(blank=True, default='')
 
@@ -85,9 +85,9 @@ class TightImageSection(PageSection):
 class TightImageCard(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     section = models.ForeignKey(TightImageSection, on_delete=models.CASCADE, related_name="cards")
-    title = models.CharField(max_length=200)
-    short_description = models.TextField(max_length=300)
-    full_description = HTMLField()
+    title = models.CharField(max_length=200, blank=True, default="")
+    short_description = models.TextField(max_length=300, blank=True, default="")
+    full_description = HTMLField(blank=True, default="")
     image = models.ImageField(upload_to="sections/tight_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
     sort_order = models.PositiveIntegerField(default=0)
