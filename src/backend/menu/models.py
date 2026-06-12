@@ -1,5 +1,6 @@
 import uuid
 from django.db import models
+from tinymce.models import HTMLField
 
 class MenuCategory(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -26,7 +27,7 @@ class MenuProduct(models.Model):
     price = models.DecimalField(max_digits=8, decimal_places=2)
     weight_g = models.PositiveIntegerField(null=True, blank=True)
     short_description = models.TextField(max_length=300, blank=True, default="")
-    full_description = models.TextField(blank=True, default="")
+    full_description = HTMLField(blank=True, default="")
     img_src = models.ImageField(upload_to="menu/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
     sort_order = models.PositiveIntegerField(default=0)

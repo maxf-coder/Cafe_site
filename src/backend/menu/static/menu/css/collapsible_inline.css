@@ -1,0 +1,19 @@
+.menuproduct-toggle-btn {
+    cursor: pointer;
+    user-select: none;
+    padding: 0 6px;
+    font-size: 12px;
+    color: var(--body-quiet-color, #666);
+    float: left;
+    line-height: 30px;
+}
+.menuproduct-toggle-btn::before {
+    content: "▶";
+    display: inline-block;
+}
+.menuproduct-toggle-btn.expanded::before {
+    content: "▼";
+}
+.menuproduct-form-body.collapsed {
+    display: none;
+}
