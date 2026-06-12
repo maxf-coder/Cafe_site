@@ -4,7 +4,7 @@ Multi-language website (RO/EN/RU) for a cafe — Django backend, PostgreSQL.
 
 ## Tech Stack
 
-Django 6.0 / DRF / PostgreSQL / django-summernote / django-admin-sortable2
+Django 6.0 / DRF / PostgreSQL / django-tinymce / django-admin-sortable2
 
 ## Setup (from a fresh clone)
 
@@ -36,7 +36,6 @@ uv run python manage.py migrate
 
 # 5. Create admin and start
 uv run python manage.py createsuperuser
-uv run python manage.py collectstatic --noinput
 uv run python manage.py runserver
 ```
 
@@ -58,6 +57,7 @@ src/backend/
 | `uv run python manage.py makemigrations` | Generate migrations |
 | `uv run python manage.py createsuperuser` | Admin account |
 | `uv run python manage.py runserver` | Dev server |
-| `uv run python manage.py collectstatic` | Static files |
+| `uv run python manage.py check` | Verify project consistency |
+| `uv run python manage.py collectstatic` | Static files (collect for production) |
 
 See `docs/` for detailed docs.

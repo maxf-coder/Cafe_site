@@ -85,13 +85,6 @@ const { data: categories } = useQuery({
   staleTime: 5 * 60 * 1000, // 5 minutes
 });
 
-// Fetch and cache menu products
-const { data: products } = useQuery({
-  queryKey: ['menu-products'],
-  queryFn: api.getMenuProducts,
-  staleTime: 5 * 60 * 1000,
-});
-
 // Fetch page content
 const { data: page } = useQuery({
   queryKey: ['page', slug],
@@ -214,7 +207,6 @@ const apiClient = axios.create({
 
 // api/endpoints.ts
 export const getMenuCategories = () => apiClient.get('/api/menu/categories/');
-export const getMenuProducts = () => apiClient.get('/api/menu/products/');
 export const getPage = (slug: string) => apiClient.get(`/api/pages/${slug}/`);
 export const getSettings = () => apiClient.get('/api/settings/');
 ```

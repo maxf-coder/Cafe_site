@@ -1,7 +1,7 @@
 # API Contract
 
 > **⚠️ NOT YET IMPLEMENTED — Target contract for when the API layer is built.**
-> The current `cafe_project/urls.py` only has `/admin/` and `/summernote/` routes.
+> The current `cafe_project/urls.py` only has `/admin/` and `/tinymce/` routes.
 > `menu/views.py` and `core/views.py` are stubs. No serializers or API URL files exist yet.
 
 ## Overview
@@ -16,57 +16,36 @@ The backend exposes read-only API endpoints. All responses are JSON. No authenti
 
 ### 1. GET /api/menu/categories/
 
-Returns menu categories sorted by `sort_order`.
+Returns menu categories sorted by `sort_order`, each with its products nested.
 
 **Response:**
 ```json
 [
   {
     "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Aperitive",
-    "slug": "aperitive"
+    "name": "Cafele clasice",
+    "slug": "cafele-clasice",
+    "products": [
+      {
+        "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+        "name": "Espresso",
+        "slug": "espresso",
+        "price": "10.00",
+        "weight_g": 30,
+        "short_description": "Cafea intensă, 30 ml",
+        "full_description": "Un shot concentrat de cafea, extras la presiune înaltă din boabe 100% Arabica.",
+        "img_src": null,
+        "alt_text": ""
+      }
+    ]
   }
 ]
 ```
 
-**TypeScript Interface:**
-```typescript
-interface MenuCategory {
-  id: string;
-  name: string;
-  slug: string;
-}
-```
-
----
-
-### 2. GET /api/menu/products/
-
-Returns all active products. Frontend groups by `category_id`.
-
-**Response:**
-```json
-[
-  {
-    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-    "category_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-    "name": "Bruschetta",
-    "slug": "bruschetta",
-    "price": "45.00",
-    "weight_g": 150,
-    "short_description": "Pâine prăjită cu roșii și busuioc",
-    "full_description": "Pâine prăjită cu roșii proaspete, busuioc, ulei de măsline și mozzarella.",
-    "img_src": "/media/menu/bruschetta.jpg",
-    "alt_text": "Bruschetta cu roșii și busuioc"
-  }
-]
-```
-
-**TypeScript Interface:**
+**TypeScript Interfaces:**
 ```typescript
 interface MenuProduct {
   id: string;
-  category_id: string;
   name: string;
   slug: string;
   price: string;
@@ -76,11 +55,18 @@ interface MenuProduct {
   img_src: string | null;
   alt_text: string;
 }
+
+interface MenuCategory {
+  id: string;
+  name: string;
+  slug: string;
+  products: MenuProduct[];
+}
 ```
 
 ---
 
-### 3. GET /api/pages/{slug}/
+### 2. GET /api/pages/{slug}/
 
 Returns a published page with hero and all published sections.
 
@@ -159,7 +145,7 @@ Returns a published page with hero and all published sections.
 
 ---
 
-### 4. GET /api/settings/
+### 3. GET /api/settings/
 
 Returns all site settings as a flat JSON object.
 
@@ -265,15 +251,8 @@ interface PageResponse {
 ### Menu
 
 ```typescript
-interface MenuCategory {
-  id: string;
-  name: string;
-  slug: string;
-}
-
 interface MenuProduct {
   id: string;
-  category_id: string;
   name: string;
   slug: string;
   price: string;
@@ -283,21 +262,20 @@ interface MenuProduct {
   img_src: string | null;
   alt_text: string;
 }
+
+interface MenuCategory {
+  id: string;
+  name: string;
+  slug: string;
+  products: MenuProduct[];
+}
 ```
 
 ### Settings
 
 ```typescript
 interface SiteSettings {
-  phone: string;
-  email: string;
-  address: string;
-  address_url: string;
-  schedule_weekdays: string;
-  schedule_weekends: string;
-  social_facebook: string | null;
-  social_instagram: string | null;
-  logo_url: string | null;
+  [key: string]: string;
 }
 ```
 
@@ -321,8 +299,7 @@ interface SiteSettings {
 
 | Endpoint | Cache Duration | Notes |
 |----------|---------------|-------|
-| `/api/menu/categories/` | 5 minutes | Categories change rarely |
-| `/api/menu/products/` | 5 minutes | Products may change daily |
+| `/api/menu/categories/` | 5 minutes | Categories and products change rarely |
 | `/api/pages/{slug}/` | 5 minutes | Content updates via admin |
 | `/api/settings/` | Until invalidation | Invalidate on settings change |
 
@@ -334,11 +311,6 @@ interface SiteSettings {
 const { data: categories } = useQuery({
   queryKey: ['menu-categories'],
   queryFn: () => api.getMenuCategories(),
-});
-
-const { data: products } = useQuery({
-  queryKey: ['menu-products'],
-  queryFn: () => api.getMenuProducts(),
 });
 
 const { data: page } = useQuery({

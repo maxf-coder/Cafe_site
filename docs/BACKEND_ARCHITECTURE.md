@@ -54,7 +54,7 @@ src/backend/
 | File | Purpose |
 |------|---------|
 | `models.py` | `SiteSettings`, `Page`, `PageHero`, `PageSection` (base), `WideImageSection`, `VideoSection`, `TightImageSection` (+ `TightImageCard`), `ReelsSection` (+ `ReelItem`) |
-| `admin.py` | Admin interface for all models with `SortableAdminMixin` and `SortableTabularInline` |
+| `admin.py` | Admin interface for all models with `SortableAdminMixin`, `SortableAdminBase`, and `TabularInline` for section reordering |
 | `views.py` | Stub (API not yet built) |
 
 ---
@@ -73,7 +73,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'django_summernote',
+    'tinymce',
     'menu',
     'core',
     'adminsortable2',
@@ -81,7 +81,7 @@ INSTALLED_APPS = [
 ```
 
 **Notes:**
-- `django_summernote` — WYSIWYG editor for rich text fields (MIT license)
+- `tinymce` — WYSIWYG editor using TinyMCE (Jazzband, MIT license, django-tinymce 5.0.0)
 - `adminsortable2` — Drag-and-drop reordering in admin
 - `corsheaders` — Must be placed early in MIDDLEWARE
 
@@ -125,7 +125,7 @@ MIDDLEWARE = [
 ```
 Root (cafe_project/urls.py)
 ├── /admin/             → Django admin panel
-├── /summernote/        → Summernote editor uploads
+├── /tinymce/           → TinyMCE editor content CSS
 ```
 
 **API routes not yet implemented.** Planned structure:

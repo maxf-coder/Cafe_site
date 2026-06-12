@@ -44,7 +44,7 @@ Cafe_site/
 │       ├── core/            # Core app (pages, settings, sections)
 │       └── manage.py
 │                              (frontend/ — not yet created)
-└── README.md                 (not yet created)
+└── README.md
 ```
 
 ## Features

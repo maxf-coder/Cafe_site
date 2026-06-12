@@ -6,7 +6,6 @@ __pycache__/
 *.pyc
 *.pyo
 .env
-
 /src/backend/static/
-
 media/
+notes

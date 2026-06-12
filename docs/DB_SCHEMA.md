@@ -43,8 +43,8 @@ Stores individual menu items within a category.
 | `slug` | SlugField | Unique, Required | URL-friendly identifier |
 | `price` | DecimalField(8,2) | Required | Price in MDL |
 | `weight_g` | PositiveIntegerField | Nullable | Weight in grams |
-| `short_description` | TextField(300) | Required | Truncated description for card view |
-| `full_description` | TextField | Required | Complete description with ingredients |
+| `short_description` | TextField(300) | Optional (`blank=True`, default=`""`) | Truncated description for card view |
+| `full_description` | TextField | Optional (`blank=True`, default=`""`) | Complete description with ingredients |
 | `img_src` | ImageField | Nullable, upload_to='menu/' | Product image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 | `sort_order` | PositiveIntegerField | Default: 0 | Display order within category |
@@ -98,8 +98,8 @@ Hero section for a page. One hero per page.
 |-------|------|-------------|-------------|
 | `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
 | `page` | OneToOneField(Page) | on_delete=CASCADE, related_name='hero' | Associated page |
-| `main_text` | TextField | Required | Primary hero heading |
-| `secondary_text` | TextField | Blank | Subtitle or tagline |
+| `main_text` | CharField(50) | Optional (`blank=True`, default=`""`) | Primary hero heading |
+| `secondary_text` | CharField(150) | Optional (`blank=True`, default=`""`) | Subtitle or tagline |
 | `img_src` | ImageField | Nullable, upload_to='heroes/' | Hero background image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 | `created_at` | DateTimeField | Auto | Creation timestamp |
@@ -133,9 +133,9 @@ Full-width image with title, description, and expandable rich text.
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
 | (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
-| `title` | CharField(200) | Required | Section heading |
-| `short_description` | TextField(300) | Required | Truncated preview text |
-| `full_description` | SummernoteTextField | Required | Rich text with HTML formatting |
+| `title` | CharField(200) | Optional (`blank=True`, default=`""`) | Section heading |
+| `short_description` | TextField(300) | Optional (`blank=True`, default=`""`) | Truncated preview text |
+| `full_description` | HTMLField | Optional (`blank=True`, default=`""`) | Rich text with HTML formatting |
 | `image` | ImageField | Nullable, upload_to='sections/wide_image/' | Full-width background image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 
@@ -150,7 +150,7 @@ Embedded video (YouTube/Vimeo) with title and description.
 | (inherits) | — | From `PageSection` | page, sort_order, is_published, timestamps |
 | `title` | CharField(200) | Required | Section heading |
 | `video_url` | URLField | Required | Embed URL for video |
-| `description` | TextField | Blank | Caption below video |
+| `description` | TextField | Optional (`blank=True`, default=`""`) | Caption below video |
 
 ---
 
@@ -173,7 +173,7 @@ Individual card within a `TightImageSection` grid.
 | `section` | ForeignKey(TightImageSection) | on_delete=CASCADE, related_name='cards' | Parent section |
 | `title` | CharField(200) | Required | Card heading |
 | `short_description` | TextField(300) | Required | Truncated preview text |
-| `full_description` | SummernoteTextField | Required | Rich text with HTML formatting |
+| `full_description` | HTMLField | Optional (`blank=True`, default=`""`) | Rich text with HTML formatting |
 | `image` | ImageField | Nullable, upload_to='sections/tight_image/' | Card image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 | `sort_order` | PositiveIntegerField | Default: 0 | Display order within grid |
@@ -226,10 +226,10 @@ SiteSettings (standalone key-value store)
 ## Design Decisions
 
 1. **PageHero as OneToOne** - Each page has exactly one hero. Clean separation from Page model.
-2. **Multi-table inheritance for sections** - Each section type gets its own database table with explicit typed fields (ImageField, SummernoteTextField, URLField). Replaces the earlier JSONB approach for better validation, admin UI, and query performance.
+2. **Multi-table inheritance for sections** - Each section type gets its own database table with explicit typed fields (ImageField, HTMLField, URLField). Replaces the earlier JSONB approach for better validation, admin UI, and query performance.
 3. **SiteSettings as key-value** - Simple, extensible. Adding a new setting requires no schema changes.
 4. **sort_order on sortable models** - Categories, products, sections, cards, and reels all have explicit ordering.
 5. **is_active/is_published flags** - Hide content without deleting. Supports draft workflows.
 6. **alt_text on all image fields** - WCAG 2.1 AA accessibility compliance.
 7. **UUID primary keys** - Not predictable, safe for distributed systems and direct object access.
-8. **SummernoteTextField for rich text** - WYSIWYG editor in admin; stores HTML. MIT license, free for commercial use.
+8. **HTMLField (django-tinymce) for rich text** - WYSIWYG editor in admin using TinyMCE (Jazzband, MIT); stores valid HTML.
