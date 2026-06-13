@@ -1,9 +1,5 @@
 # API Contract
 
-> **⚠️ NOT YET IMPLEMENTED — Target contract for when the API layer is built.**
-> The current `cafe_project/urls.py` only has `/admin/` and `/tinymce/` routes.
-> `menu/views.py` and `core/views.py` are stubs. No serializers or API URL files exist yet.
-
 ## Overview
 
 The backend exposes read-only API endpoints. All responses are JSON. No authentication required.
@@ -34,7 +30,7 @@ Returns menu categories sorted by `sort_order`, each with its products nested.
         "weight_g": 30,
         "short_description": "Cafea intensă, 30 ml",
         "full_description": "Un shot concentrat de cafea, extras la presiune înaltă din boabe 100% Arabica.",
-        "img_src": null,
+        "img_src": "http://localhost:8000/media/menu/espresso.jpg",
         "alt_text": ""
       }
     ]
@@ -80,7 +76,7 @@ Returns a published page with hero and all published sections.
   "hero": {
     "main_text": "Povestea Noastră",
     "secondary_text": "Un loc unde gustul întâlnește comunitatea",
-    "img_src": "/media/heroes/about.jpg",
+    "img_src": "http://localhost:8000/media/heroes/about.jpg",
     "alt_text": "Echipa Fiesta Gastro Cafe"
   },
   "sections": [
@@ -91,7 +87,7 @@ Returns a published page with hero and all published sections.
         "title": "Bine ați venit la Fiesta",
         "short_description": "Servim pasiune în fiecare farfurie.",
         "full_description": "<p>Fondată în 2020, Fiesta Gastro Cafe...</p>",
-        "img_src": "/media/sections/wide_image/welcome.jpg",
+        "img_src": "http://localhost:8000/media/sections/wide_image/welcome.jpg",
         "alt_text": "Interiorul cafenelei"
       }
     },
@@ -105,7 +101,7 @@ Returns a published page with hero and all published sections.
             "title": "Bucătar Maria",
             "short_description": "10 ani experiență în bucătăria italiană.",
             "full_description": "<p>Maria a studiat la Roma...</p>",
-            "img_src": "/media/sections/tight_image/maria.jpg",
+            "img_src": "http://localhost:8000/media/sections/tight_image/maria.jpg",
             "alt_text": "Bucătarul Maria"
           }
         ]
@@ -152,30 +148,20 @@ Returns all site settings as a flat JSON object.
 **Response:**
 ```json
 {
-  "phone": "+373 60 123 456",
-  "email": "contact@fiestagastro.md",
-  "address": "str. Ștefan cel Mare 42, Chișinău, Moldova",
-  "address_url": "https://maps.google.com/?q=47.0105,28.8647",
-  "schedule_weekdays": "Luni - Vineri: 09:00 - 23:00",
-  "schedule_weekends": "Sâmbătă - Duminică: 10:00 - 00:00",
-  "social_facebook": "https://facebook.com/fiestagastro",
-  "social_instagram": "https://instagram.com/fiestagastro",
-  "logo_url": "/media/logo.png"
+  "phone": "+40 7XX XXX XXX",
+  "email": "contact@caferazesu.ro",
+  "address": "Strada Exemplu, Nr. 1, București",
+  "facebook_url": "https://facebook.com/caferazesu",
+  "tiktok_url": "https://tiktok.com/@caferazesu",
+  "working_hours": "L-V: 08:00 - 22:00, S-D: 10:00 - 00:00",
+  "footer_copyright": "© 2026 Cafe Răzeșu. Toate drepturile rezervate."
 }
 ```
 
 **TypeScript Interface:**
 ```typescript
 interface SiteSettings {
-  phone: string;
-  email: string;
-  address: string;
-  address_url: string;
-  schedule_weekdays: string;
-  schedule_weekends: string;
-  social_facebook: string | null;
-  social_instagram: string | null;
-  logo_url: string | null;
+  [key: string]: string;
 }
 ```
 
@@ -272,6 +258,8 @@ interface MenuCategory {
 ```
 
 ### Settings
+
+Settings is a flat dictionary; the actual keys depend on what's stored in the database.
 
 ```typescript
 interface SiteSettings {

@@ -4,7 +4,7 @@ Multi-language website (RO/EN/RU) for a cafe — Django backend, PostgreSQL.
 
 ## Tech Stack
 
-Django 6.0 / DRF / PostgreSQL / django-tinymce / django-admin-sortable2
+Django 6.0 / DRF / PostgreSQL / django-tinymce / django-admin-sortable2 / django-polymorphic / drf-spectacular
 
 ## Setup (from a fresh clone)
 

@@ -19,17 +19,26 @@ src/backend/
 │   ├── apps.py               # App configuration
 │   ├── models.py             # MenuCategory, MenuProduct
 │   ├── migrations/           # Database migrations
-│   │   └── 0001_initial.py
-│   └── views.py              # Stub (API not yet built)
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_*            # Make short_description + full_description optional
+│   │   └── 0003_*            # Switch full_description to HTMLField (tinymce)
+│   ├── serializers.py        # MenuProductSerializer, MenuCategorySerializer
+│   ├── urls.py               # router → /api/menu/categories/
+│   └── views.py              # MenuCategoryViewSet (ReadOnlyModelViewSet)
 ├── core/                     # Core app (global functionality)
 │   ├── __init__.py
 │   ├── admin.py              # Django admin registration
 │   ├── apps.py               # App configuration
-│   ├── models.py             # Page, PageHero, PageSection + 4 child section models
+│   ├── models.py             # Page, PageHero, PageSection (PolymorphicModel), WideImageSection, VideoSection, TightImageSection (+ TightImageCard), ReelsSection (+ ReelItem)
 │   ├── migrations/           # Database migrations
-│   │   ├── 0001_initial.py   # Old schema (section_type + JSONB)
-│   │   └── 0002_*.py         # Broken (references uninstalled ckeditor)
-│   └── views.py              # Stub (API not yet built)
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_*            # Make various fields optional
+│   │   ├── 0003_*            # Rename image → img_src on WideImageSection + TightImageCard
+│   │   ├── 0004_*            # Add polymorphic_ctype field
+│   │   └── 0005_*            # Populate polymorphic_ctype for existing rows
+│   ├── serializers.py        # Polymorphic section serializer, PageDetailSerializer, SiteSettingsSerializer
+│   ├── urls.py               # /api/pages/<slug>/, /api/settings/
+│   └── views.py              # PageDetailView, SiteSettingsView
 └── static/                   # Collected static files (gitignored)
 ```
 
@@ -45,7 +54,9 @@ src/backend/
 |------|---------|
 | `models.py` | `MenuCategory`, `MenuProduct` models |
 | `admin.py` | Admin interface with `SortableAdminMixin` |
-| `views.py` | Stub (API not yet built) |
+| `serializers.py` | `MenuProductSerializer`, `MenuCategorySerializer` (nested products) |
+| `urls.py` | `DefaultRouter` → `/menu/categories/` |
+| `views.py` | `MenuCategoryViewSet` (ReadOnlyModelViewSet, filter `is_active=True`) |
 
 ### `core` App
 
@@ -55,7 +66,9 @@ src/backend/
 |------|---------|
 | `models.py` | `SiteSettings`, `Page`, `PageHero`, `PageSection` (base), `WideImageSection`, `VideoSection`, `TightImageSection` (+ `TightImageCard`), `ReelsSection` (+ `ReelItem`) |
 | `admin.py` | Admin interface for all models with `SortableAdminMixin`, `SortableAdminBase`, and `TabularInline` for section reordering |
-| `views.py` | Stub (API not yet built) |
+| `serializers.py` | All serializers: `PageHeroSerializer`, polymorphic `PageSectionSerializer` (dispatches via `isinstance`), `PageDetailSerializer`, flat-object `SiteSettingsSerializer` |
+| `urls.py` | `pages/<slug:slug>/` (PageDetailView), `settings/` (SiteSettingsView) |
+| `views.py` | `PageDetailView` (RetrieveAPIView, `lookup_field="slug"`), `SiteSettingsView` (ListAPIView with custom `get_serializer`) |
 
 ---
 
@@ -74,6 +87,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'tinymce',
+    'drf_spectacular',
+    'polymorphic',
     'menu',
     'core',
     'adminsortable2',
@@ -124,24 +139,20 @@ MIDDLEWARE = [
 
 ```
 Root (cafe_project/urls.py)
-├── /admin/             → Django admin panel
-├── /tinymce/           → TinyMCE editor content CSS
-```
-
-**API routes not yet implemented.** Planned structure:
-
-```
-/api/menu/categories/   → (not built)
-/api/menu/products/     → (not built)
-/api/pages/<slug>/      → (not built)
-/api/settings/          → (not built)
+├── /admin/                 → Django admin panel
+├── /tinymce/               → TinyMCE editor content CSS
+├── /api/menu/categories/   → MenuCategoryViewSet (categories with nested products)
+├── /api/pages/<slug>/      → PageDetailView (published page with hero + typed sections)
+├── /api/settings/          → SiteSettingsView (flat key-value object)
+├── /api/schema/            → drf-spectacular OpenAPI schema (DEBUG only)
+└── /api/docs/              → Swagger UI (DEBUG only)
 ```
 
 ---
 
 ## Authentication
 
-**Public API:** Not yet implemented. All planned endpoints are read-only, no authentication.
+**Public API:** All endpoints are read-only, no authentication (`AllowAny`). JSON only in production; browsable API available in DEBUG mode.
 
 **Admin Panel:** Django's built-in authentication. Single admin user for content management.
 
@@ -151,7 +162,8 @@ Root (cafe_project/urls.py)
 
 ### Development
 - Images stored in `media/` directory
-- Served via Django's static file handler (DEBUG=True)
+- Served via `static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)` in `urls.py`
+- Image fields return absolute URLs via `build_absolute_uri` in serializers
 
 ### Production (Planned)
 - Images uploaded to Cloudinary
@@ -162,4 +174,17 @@ Root (cafe_project/urls.py)
 
 ## DRF Configuration
 
-No custom DRF config in `settings.py` yet. To be added when API layer is built.
+```python
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+# In production, browsable API is disabled:
+if not DEBUG:
+    REST_FRAMEWORK |= {"DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ]}
+```

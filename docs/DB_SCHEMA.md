@@ -109,7 +109,7 @@ Hero section for a page. One hero per page.
 
 ### PageSection
 
-Base model for modular content blocks. Uses **multi-table inheritance** — each section type has its own table with type-specific fields, sharing the base `PageSection` fields (page, sort_order, is_published).
+Base model for modular content blocks. Uses **multi-table inheritance** with `django-polymorphic` — each section type has its own table with type-specific fields, sharing the base `PageSection` fields. Querying `PageSection.objects.all()` automatically returns the correct child class instances (`WideImageSection`, `VideoSection`, etc.).
 
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
@@ -117,6 +117,7 @@ Base model for modular content blocks. Uses **multi-table inheritance** — each
 | `page` | ForeignKey(Page) | on_delete=CASCADE, related_name='sections' | Parent page |
 | `sort_order` | PositiveIntegerField | Default: 0 | Display order on page |
 | `is_published` | BooleanField | Default: True | Show/hide section |
+| `polymorphic_ctype` | ForeignKey(ContentType) | Nullable, added by django-polymorphic | Points to the ContentType of the child class for automatic downcasting |
 | `created_at` | DateTimeField | Auto | Creation timestamp |
 | `updated_at` | DateTimeField | Auto | Last update timestamp |
 
@@ -226,7 +227,7 @@ SiteSettings (standalone key-value store)
 ## Design Decisions
 
 1. **PageHero as OneToOne** - Each page has exactly one hero. Clean separation from Page model.
-2. **Multi-table inheritance for sections** - Each section type gets its own database table with explicit typed fields (ImageField, HTMLField, URLField). Replaces the earlier JSONB approach for better validation, admin UI, and query performance.
+2. **Multi-table inheritance with `django-polymorphic`** - Each section type gets its own database table with explicit typed fields (ImageField, HTMLField, URLField). `django-polymorphic` ensures that querying the parent table returns actual child class instances, so no manual type dispatch is needed.
 3. **SiteSettings as key-value** - Simple, extensible. Adding a new setting requires no schema changes.
 4. **sort_order on sortable models** - Categories, products, sections, cards, and reels all have explicit ordering.
 5. **is_active/is_published flags** - Hide content without deleting. Supports draft workflows.

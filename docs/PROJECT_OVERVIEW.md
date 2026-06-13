@@ -61,7 +61,7 @@ Cafe_site/
 - [x] Django Admin panel for content management (backend models + admin ready)
 - [x] Site settings key-value store (model + admin ready)
 
-**Status:** Backend (`src/backend/`) has models, admin, and migrations. API layer (serializers, views, URLs) and frontend are not yet built.
+**Status:** Backend API layer is complete — serializers, views, URLs, and drf-spectacular schema documentation are implemented and tested. Frontend is not yet built.
 
 ### Out of Scope
 - [ ] Online ordering or shopping cart
@@ -85,7 +85,7 @@ All content pages (About, Events, Charity) use modular sections with **multi-tab
 | **Video** | `VideoSection` | Embedded YouTube/Vimeo video with title and description |
 | **Reels Carousel** | `ReelsSection` + `ReelItem` | Horizontal scrollable carousel of short-form videos |
 
-All section types inherit from `PageSection` (base model with `page`, `sort_order`, `is_published`).
+All section types inherit from `PageSection` (base model with `page`, `sort_order`, `is_published`). Querying uses `django-polymorphic` — `PageSection.objects.all()` automatically returns the correct child class instances (`WideImageSection`, `VideoSection`, etc.), so no manual type dispatch is needed in the ORM layer.
 
 ## Deployment (Planned)
 
