@@ -28,6 +28,7 @@ dependencies = [
     { name = "django" },
     { name = "django-admin-sortable2" },
     { name = "django-cors-headers" },
+    { name = "django-polymorphic" },
     { name = "django-tinymce" },
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
@@ -41,6 +42,7 @@ requires-dist = [
     { name = "django", specifier = ">=6.0.5" },
     { name = "django-admin-sortable2", specifier = ">=2.3.1" },
     { name = "django-cors-headers", specifier = ">=4.9.0" },
+    { name = "django-polymorphic", specifier = ">=4.11.5" },
     { name = "django-tinymce", specifier = ">=5.0.0" },
     { name = "djangorestframework", specifier = ">=3.17.1" },
     { name = "drf-spectacular", specifier = ">=0.29.0" },
@@ -86,6 +88,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/21/39/55822b15b7ec87410f34cd16ce04065ff390e50f9e29f31d6d116fc80456/django_cors_headers-4.9.0.tar.gz", hash = "sha256:fe5d7cb59fdc2c8c646ce84b727ac2bca8912a247e6e68e1fb507372178e59e8", size = 21458, upload-time = "2025-09-18T10:40:52.326Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/d8/19ed1e47badf477d17fb177c1c19b5a21da0fd2d9f093f23be3fb86c5fab/django_cors_headers-4.9.0-py3-none-any.whl", hash = "sha256:15c7f20727f90044dcee2216a9fd7303741a864865f0c3657e28b7056f61b449", size = 12809, upload-time = "2025-09-18T10:40:50.843Z" },
+]
+
+[[package]]
+name = "django-polymorphic"
+version = "4.11.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/1c/48e4c076942d57ad0d6d5033e396d3efc12bac0b19b248891d858bb3e6fd/django_polymorphic-4.11.5.tar.gz", hash = "sha256:9a6fe66fab12cfe06aac81942d14670c6b0204aebd30ce9fb58fb53213c613eb", size = 61789, upload-time = "2026-06-02T15:51:50.912Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/44/efac024b4d818e76bb13e0ea1cfebb86c111fa5a40c0c700c748d6a3d8d8/django_polymorphic-4.11.5-py3-none-any.whl", hash = "sha256:8c65b5c109c057c51e059197b01765dd5e096b3fd393ee3038bffc294681b3be", size = 79095, upload-time = "2026-06-02T15:51:49.371Z" },
 ]
 
 [[package]]

@@ -14,7 +14,7 @@ class MenuProductSerializer(serializers.ModelSerializer):
 
     def get_img_src(self, obj):
         if obj.img_src:
-            return self.context["request"].build_absolute_url(obj.img_src.url)
+            return self.context["request"].build_absolute_uri(obj.img_src.url)
         return None
     
 class MenuCategorySerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from tinymce.models import HTMLField
+from polymorphic.models import PolymorphicModel
 
 class SiteSettings(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -44,7 +45,7 @@ class PageHero(models.Model):
     def __str__(self):
         return f"Hero for {self.page.name}"
     
-class PageSection(models.Model):
+class PageSection(PolymorphicModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     page = models.ForeignKey(Page, on_delete=models.CASCADE, related_name="sections")
     sort_order = models.PositiveIntegerField(default=0)

@@ -11,3 +11,6 @@ class SiteSettingsView(ListAPIView):
     queryset = SiteSettings.objects.all()
     serializer_class = SiteSettingsSerializer
     
+    def get_serializer(self, *args, **kwargs):
+        kwargs["many"] = False
+        return super().get_serializer(*args, **kwargs)
