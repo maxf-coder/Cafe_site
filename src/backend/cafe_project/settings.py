@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     "tinymce",
     "menu",
     "core",
-    "adminsortable2"
+    "adminsortable2",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -138,4 +139,14 @@ TINYMCE_DEFAULT_CONFIG = {
                "table link | "
                "fullscreen | "
                "removeformat help",
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

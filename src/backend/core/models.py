@@ -27,6 +27,10 @@ class Page(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def published_sections(self):
+        return self.sections.filter(is_published=True)
+    
 class PageHero(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     page = models.OneToOneField(Page, on_delete=models.CASCADE, related_name="hero")
