@@ -63,7 +63,7 @@ class WideImageSection(PageSection):
     title = models.CharField(max_length=200, blank=True, default="")
     short_description = models.TextField(max_length=300, blank=True, default="")
     full_description = HTMLField(blank=True, default="")
-    image = models.ImageField(upload_to="sections/wide_image/", null=True, blank=True)
+    img_src = models.ImageField(upload_to="sections/wide_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
 
     def __str__(self):
@@ -92,7 +92,7 @@ class TightImageCard(models.Model):
     title = models.CharField(max_length=200, blank=True, default="")
     short_description = models.TextField(max_length=300, blank=True, default="")
     full_description = HTMLField(blank=True, default="")
-    image = models.ImageField(upload_to="sections/tight_image/", null=True, blank=True)
+    img_src = models.ImageField(upload_to="sections/tight_image/", null=True, blank=True)
     alt_text = models.CharField(max_length=200, blank=True, default="")
     sort_order = models.PositiveIntegerField(default=0)
 

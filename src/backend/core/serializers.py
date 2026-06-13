@@ -22,18 +22,18 @@ class PageHeroSerializer(serializers.ModelSerializer):
 
 
 class WideImageSectionSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    img_src = serializers.SerializerMethodField()
 
     class Meta:
         model = WideImageSection
         fields = [
             "id", "title", "short_description",
-            "full_description", "image", "alt_text",
+            "full_description", "img_src", "alt_text",
         ]
 
-    def get_image(self, obj):
-        if obj.image:
-            return self.context["request"].build_absolute_uri(obj.image.url)
+    def get_img_src(self, obj):
+        if obj.img_src:
+            return self.context["request"].build_absolute_uri(obj.img_src.url)
         return None
 
 
@@ -44,18 +44,18 @@ class VideoSectionSerializer(serializers.ModelSerializer):
 
 
 class TightImageCardSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    img_src = serializers.SerializerMethodField()
 
     class Meta:
         model = TightImageCard
         fields = [
             "title", "short_description",
-            "full_description", "image", "alt_text",
+            "full_description", "img_src", "alt_text",
         ]
 
-    def get_image(self, obj):
-        if obj.image:
-            return self.context["request"].build_absolute_uri(obj.image.url)
+    def get_img_src(self, obj):
+        if obj.img_src:
+            return self.context["request"].build_absolute_uri(obj.img_src.url)
         return None
 
 
