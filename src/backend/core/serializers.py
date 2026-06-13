@@ -117,12 +117,6 @@ class PageSectionSerializer(serializers.Serializer):
             }
 
 
-class PageListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Page
-        fields = ["name", "slug"]
-
-
 class PageDetailSerializer(serializers.ModelSerializer):
     hero = PageHeroSerializer(read_only=True)
     sections = PageSectionSerializer(

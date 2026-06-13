@@ -91,7 +91,7 @@ Returns a published page with hero and all published sections.
         "title": "Bine ați venit la Fiesta",
         "short_description": "Servim pasiune în fiecare farfurie.",
         "full_description": "<p>Fondată în 2020, Fiesta Gastro Cafe...</p>",
-        "image": "/media/sections/wide_image/welcome.jpg",
+        "img_src": "/media/sections/wide_image/welcome.jpg",
         "alt_text": "Interiorul cafenelei"
       }
     },
@@ -105,7 +105,7 @@ Returns a published page with hero and all published sections.
             "title": "Bucătar Maria",
             "short_description": "10 ani experiență în bucătăria italiană.",
             "full_description": "<p>Maria a studiat la Roma...</p>",
-            "image": "/media/sections/tight_image/maria.jpg",
+            "img_src": "/media/sections/tight_image/maria.jpg",
             "alt_text": "Bucătarul Maria"
           }
         ]
@@ -200,7 +200,7 @@ interface WideImageContent {
   title: string;
   short_description: string;
   full_description: string;
-  image: string;
+  img_src: string;
   alt_text: string;
 }
 
@@ -208,7 +208,7 @@ interface TightImageCard {
   title: string;
   short_description: string;
   full_description: string;
-  image: string;
+  img_src: string;
   alt_text: string;
 }
 

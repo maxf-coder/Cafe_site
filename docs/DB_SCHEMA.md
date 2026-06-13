@@ -136,7 +136,7 @@ Full-width image with title, description, and expandable rich text.
 | `title` | CharField(200) | Optional (`blank=True`, default=`""`) | Section heading |
 | `short_description` | TextField(300) | Optional (`blank=True`, default=`""`) | Truncated preview text |
 | `full_description` | HTMLField | Optional (`blank=True`, default=`""`) | Rich text with HTML formatting |
-| `image` | ImageField | Nullable, upload_to='sections/wide_image/' | Full-width background image |
+| `img_src` | ImageField | Nullable, upload_to='sections/wide_image/' | Full-width background image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 
 ---
@@ -174,7 +174,7 @@ Individual card within a `TightImageSection` grid.
 | `title` | CharField(200) | Required | Card heading |
 | `short_description` | TextField(300) | Required | Truncated preview text |
 | `full_description` | HTMLField | Optional (`blank=True`, default=`""`) | Rich text with HTML formatting |
-| `image` | ImageField | Nullable, upload_to='sections/tight_image/' | Card image |
+| `img_src` | ImageField | Nullable, upload_to='sections/tight_image/' | Card image |
 | `alt_text` | CharField(200) | Blank, Default: '' | Accessibility alt text |
 | `sort_order` | PositiveIntegerField | Default: 0 | Display order within grid |
 

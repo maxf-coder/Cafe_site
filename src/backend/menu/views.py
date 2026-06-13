@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ReadOnlyModelViewSet
+from .models import MenuCategory
+from .serializers import MenuCategorySerializer
 
-# Create your views here.
+class MenuCategoryViewSet(ReadOnlyModelViewSet):
+    queryset = MenuCategory.objects.filter(is_active=True)
+    serializer_class = MenuCategorySerializer
