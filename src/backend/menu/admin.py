@@ -11,5 +11,14 @@ class MenuProductInline(SortableStackedInline):
 class MenuCategoryAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ("name", "slug", "sort_order", "is_active")
     list_editable = ("sort_order", "is_active")
-    prepopulated_fields = {"slug": ("name",)}
     inlines = [MenuProductInline]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ("slug",)
+        return ()
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj:
+            return {}
+        return {"slug": ("name",)}

@@ -82,7 +82,6 @@ class ReelsSectionInline(admin.TabularInline):
 @admin.register(Page)
 class PageAdmin(admin.ModelAdmin):
     list_display = ("name", "slug", "is_published")
-    prepopulated_fields = {"slug": ("name",)}
     inlines = [
         PageHeroInline,
         WideImageSectionInline,
@@ -90,4 +89,17 @@ class PageAdmin(admin.ModelAdmin):
         TightImageSectionInline,
         ReelsSectionInline,
     ]
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:
+            return ("slug",)
+        return ()
+
+    def get_prepopulated_fields(self, request, obj=None):
+        if obj:
+            return {}
+        return {"slug": ("name",)}
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
