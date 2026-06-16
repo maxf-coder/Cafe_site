@@ -8,9 +8,23 @@ The backend exposes read-only API endpoints. All responses are JSON. No authenti
 
 ---
 
+## Language Parameter
+
+All endpoints accept an optional `?lang=` query parameter:
+
+| Value | Language |
+|-------|----------|
+| `ro` | Romanian (default) |
+| `en` | English |
+| `ru` | Russian |
+
+If omitted, Romanian is used. Add it to every GET request: `?lang=ro`, `?lang=en`, `?lang=ru`.
+
+---
+
 ## Endpoints
 
-### 1. GET /api/menu/categories/
+### 1. GET /api/v1/menu/categories/
 
 Returns menu categories sorted by `sort_order`, each with its products nested.
 
@@ -62,11 +76,11 @@ interface MenuCategory {
 
 ---
 
-### 2. GET /api/pages/{slug}/
+### 2. GET /api/v1/pages/{slug}/
 
 Returns a published page with hero and all published sections.
 
-**Request:** `GET /api/pages/despre-noi/`
+**Request:** `GET /api/v1/pages/despre-noi/?lang=ro`
 
 **Response:**
 ```json
@@ -84,6 +98,7 @@ Returns a published page with hero and all published sections.
       "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
       "type": "wide_image",
       "content": {
+        "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
         "title": "Bine ați venit la Fiesta",
         "short_description": "Servim pasiune în fiecare farfurie.",
         "full_description": "<p>Fondată în 2020, Fiesta Gastro Cafe...</p>",
@@ -95,6 +110,7 @@ Returns a published page with hero and all published sections.
       "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
       "type": "tight_image",
       "content": {
+        "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
         "title": "Echipa Noastră",
         "cards": [
           {
@@ -111,6 +127,7 @@ Returns a published page with hero and all published sections.
       "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
       "type": "video",
       "content": {
+        "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
         "title": "În Spatele Scenei",
         "video_url": "https://www.youtube.com/embed/abc123",
         "description": "Uitați cum pregătim mâncarea voastră preferată."
@@ -120,6 +137,7 @@ Returns a published page with hero and all published sections.
       "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
       "type": "reels",
       "content": {
+        "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
         "title": "Clipuri Rapide",
         "reels": [
           {
@@ -141,7 +159,7 @@ Returns a published page with hero and all published sections.
 
 ---
 
-### 3. GET /api/settings/
+### 3. GET /api/v1/settings/
 
 Returns all site settings as a flat JSON object.
 
@@ -167,6 +185,18 @@ interface SiteSettings {
 
 ---
 
+## Additional Endpoints
+
+### 4. GET /api/v1/schema/ (DEBUG only)
+
+Returns the raw OpenAPI schema as JSON. Used by Swagger UI.
+
+### 5. GET /api/v1/docs/ (DEBUG only)
+
+Swagger UI documentation interface with interactive endpoint testing. Includes a `lang` dropdown on every endpoint.
+
+---
+
 ## TypeScript Interfaces
 
 ### Page
@@ -183,6 +213,7 @@ interface PageHero {
 type SectionType = 'wide_image' | 'tight_image' | 'video' | 'reels';
 
 interface WideImageContent {
+  id: string;
   title: string;
   short_description: string;
   full_description: string;
@@ -199,11 +230,13 @@ interface TightImageCard {
 }
 
 interface TightImageContent {
+  id: string;
   title: string;
   cards: TightImageCard[];
 }
 
 interface VideoContent {
+  id: string;
   title: string;
   video_url: string;
   description: string;
@@ -214,6 +247,7 @@ interface ReelItem {
 }
 
 interface ReelsContent {
+  id: string;
   title: string;
   reels: ReelItem[];
 }
@@ -287,27 +321,39 @@ interface SiteSettings {
 
 | Endpoint | Cache Duration | Notes |
 |----------|---------------|-------|
-| `/api/menu/categories/` | 5 minutes | Categories and products change rarely |
-| `/api/pages/{slug}/` | 5 minutes | Content updates via admin |
-| `/api/settings/` | Until invalidation | Invalidate on settings change |
+| `/api/v1/menu/categories/` | 5 minutes | Categories and products change rarely |
+| `/api/v1/pages/{slug}/` | 5 minutes | Content updates via admin |
+| `/api/v1/settings/` | Until invalidation | Invalidate on settings change |
 
 ---
 
 ## Frontend Usage Pattern
 
+**API client** should auto-inject `?lang=` via Axios interceptor:
+
+```typescript
+apiClient.interceptors.request.use((config) => {
+  const lang = getCurrentLang(); // read from URL or i18n context
+  config.params = { ...config.params, lang };
+  return config;
+});
+```
+
+**TanStack Query keys** must include the current language:
+
 ```typescript
 const { data: categories } = useQuery({
-  queryKey: ['menu-categories'],
+  queryKey: ['menu-categories', lang],
   queryFn: () => api.getMenuCategories(),
 });
 
 const { data: page } = useQuery({
-  queryKey: ['page', slug],
+  queryKey: ['page', slug, lang],
   queryFn: () => api.getPage(slug),
 });
 
 const { data: settings } = useQuery({
-  queryKey: ['settings'],
+  queryKey: ['settings', lang],
   queryFn: () => api.getSettings(),
   staleTime: Infinity,
 });

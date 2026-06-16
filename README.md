@@ -4,7 +4,7 @@ Multi-language website (RO/EN/RU) for a cafe — Django backend, PostgreSQL.
 
 ## Tech Stack
 
-Django 6.0 / DRF / PostgreSQL / django-tinymce / django-admin-sortable2 / django-polymorphic / drf-spectacular
+Django 6.0 / DRF / PostgreSQL / django-tinymce / django-admin-sortable2 / django-polymorphic / drf-spectacular / django-modeltranslation
 
 ## Setup (from a fresh clone)
 
@@ -43,9 +43,10 @@ uv run python manage.py runserver
 
 ```
 src/backend/
-├── cafe_project/   # settings, root urls
-├── menu/           # categories, products
-├── core/           # pages, sections, settings
+├── cafe_project/   # settings, urls, middleware, OpenAPI schema
+├── menu/           # categories, products, translations
+├── core/           # pages, sections, settings, translations
+├── logs/           # rotating log files (auto-created)
 └── manage.py
 ```
 
@@ -58,6 +59,8 @@ src/backend/
 | `uv run python manage.py createsuperuser` | Admin account |
 | `uv run python manage.py runserver` | Dev server |
 | `uv run python manage.py check` | Verify project consistency |
+| `uv run python manage.py test` | Run all tests (10 passing) |
 | `uv run python manage.py collectstatic` | Static files (collect for production) |
+| `uv run python manage.py update_translation_fields` | Sync translation fields after model changes |
 
 See `docs/` for detailed docs.

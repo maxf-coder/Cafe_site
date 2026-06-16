@@ -22,15 +22,15 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Django 6.x + Django REST Framework |
+| **Backend** | Django 6.x + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic |
 | **Frontend** | React 18 + Vite + TypeScript |
 | **Database** | PostgreSQL |
 | **Styling** | Tailwind CSS + shadcn/ui |
 | **State Management** | TanStack Query (server state) + React Context (UI state) |
 | **Routing** | React Router |
-| **i18n** | Custom i18n context |
+| **i18n** | django-modeltranslation (backend) + Custom React Context (frontend) |
 | **Hosting** | Render |
-| **Media Storage** | Cloudinary (production), local media (development) |
+| **Media Storage** | Cloudinary (planned), local media (development) |
 
 ## Project Structure
 
@@ -39,9 +39,10 @@ Cafe_site/
 ├── docs/                    # Project documentation
 ├── src/
 │   └── backend/             # Django project
-│       ├── cafe_project/    # Django settings & config
-│       ├── menu/            # Menu app (categories, products)
-│       ├── core/            # Core app (pages, settings, sections)
+│       ├── cafe_project/    # Django settings, urls, middleware, schema
+│       ├── menu/            # Menu app (categories, products, translations)
+│       ├── core/            # Core app (pages, sections, settings, translations)
+│       ├── logs/            # Rotating log files (auto-created)
 │       └── manage.py
 │                              (frontend/ — not yet created)
 └── README.md
@@ -60,8 +61,12 @@ Cafe_site/
 - [ ] Footer with contact info, schedule, social links
 - [x] Django Admin panel for content management (backend models + admin ready)
 - [x] Site settings key-value store (model + admin ready)
+- [x] Multi-language content model (RO/EN/RU via django-modeltranslation)
+- [x] API endpoint language switching (?lang= query parameter)
+- [x] Request logging (console + rotating file)
+- [x] Admin protections (slugs locked on edit, pages undeletable)
 
-**Status:** Backend API layer is complete — serializers, views, URLs, and drf-spectacular schema documentation are implemented and tested. Frontend is not yet built.
+**Status:** Backend API layer is complete — serializers, views, URLs, drf-spectacular schema, language middleware, logging, and 10 tests are implemented and passing. Frontend is not yet built.
 
 ### Out of Scope
 - [ ] Online ordering or shopping cart
@@ -85,7 +90,13 @@ All content pages (About, Events, Charity) use modular sections with **multi-tab
 | **Video** | `VideoSection` | Embedded YouTube/Vimeo video with title and description |
 | **Reels Carousel** | `ReelsSection` + `ReelItem` | Horizontal scrollable carousel of short-form videos |
 
-All section types inherit from `PageSection` (base model with `page`, `sort_order`, `is_published`). Querying uses `django-polymorphic` — `PageSection.objects.all()` automatically returns the correct child class instances (`WideImageSection`, `VideoSection`, etc.), so no manual type dispatch is needed in the ORM layer.
+All section types inherit from `PageSection` (base model with `page`, `sort_order`, `is_published`). The `Page.published_sections` property filters `is_published=True` and returns proper child class instances via `django-polymorphic` — no manual type dispatch needed in the ORM layer.
+
+## Multi-Language Architecture
+
+Content is stored in three language columns per field (`name_ro`, `name_en`, `name_ru`) via `django-modeltranslation`. The active language is selected by a `?lang=ro|en|ru` query parameter on every API request. Slugs are **not** translated — they remain in Romanian as permanent URL identifiers.
+
+See `docs/BACKEND_ARCHITECTURE.md` for the full language configuration.
 
 ## Deployment (Planned)
 
