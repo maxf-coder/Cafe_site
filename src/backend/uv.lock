@@ -28,6 +28,7 @@ dependencies = [
     { name = "django" },
     { name = "django-admin-sortable2" },
     { name = "django-cors-headers" },
+    { name = "django-modeltranslation" },
     { name = "django-polymorphic" },
     { name = "django-tinymce" },
     { name = "djangorestframework" },
@@ -42,6 +43,7 @@ requires-dist = [
     { name = "django", specifier = ">=6.0.5" },
     { name = "django-admin-sortable2", specifier = ">=2.3.1" },
     { name = "django-cors-headers", specifier = ">=4.9.0" },
+    { name = "django-modeltranslation", specifier = ">=0.20.3" },
     { name = "django-polymorphic", specifier = ">=4.11.5" },
     { name = "django-tinymce", specifier = ">=5.0.0" },
     { name = "djangorestframework", specifier = ">=3.17.1" },
@@ -88,6 +90,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/21/39/55822b15b7ec87410f34cd16ce04065ff390e50f9e29f31d6d116fc80456/django_cors_headers-4.9.0.tar.gz", hash = "sha256:fe5d7cb59fdc2c8c646ce84b727ac2bca8912a247e6e68e1fb507372178e59e8", size = 21458, upload-time = "2025-09-18T10:40:52.326Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/d8/19ed1e47badf477d17fb177c1c19b5a21da0fd2d9f093f23be3fb86c5fab/django_cors_headers-4.9.0-py3-none-any.whl", hash = "sha256:15c7f20727f90044dcee2216a9fd7303741a864865f0c3657e28b7056f61b449", size = 12809, upload-time = "2025-09-18T10:40:50.843Z" },
+]
+
+[[package]]
+name = "django-modeltranslation"
+version = "0.20.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d1/db/a0c18e3053c97176a195ee05891ad2e673c531eba612c8aa09b51333d634/django_modeltranslation-0.20.3.tar.gz", hash = "sha256:53f5e33927b99e184f3100c965c45f306f370b7086c6b34e35468800be0916ea", size = 82061, upload-time = "2026-04-14T05:20:06.561Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/40/addb85c32031945ebed0545842fffbd9a5604fdc16bd684583e538137cbd/django_modeltranslation-0.20.3-py3-none-any.whl", hash = "sha256:0e1aaf77ce3dcf80c7ec67a6d67821635d07f4849c90363bc0afedb237b014f0", size = 98703, upload-time = "2026-04-14T05:20:04.394Z" },
 ]
 
 [[package]]
