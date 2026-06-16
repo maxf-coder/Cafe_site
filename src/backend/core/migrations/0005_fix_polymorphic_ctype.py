@@ -7,7 +7,9 @@ def fix_polymorphic_ctype(apps, schema_editor):
 
     for child_name in ["WideImageSection", "VideoSection", "TightImageSection", "ReelsSection"]:
         ChildModel = apps.get_model("core", child_name)
-        ctype = ContentType.objects.get(app_label="core", model=child_name.lower())
+        ctype, _ = ContentType.objects.get_or_create(
+            app_label="core", model=child_name.lower(),
+        )
         child_ids = ChildModel.objects.values_list("pagesection_ptr_id", flat=True)
         PageSection.objects.filter(
             id__in=child_ids,
