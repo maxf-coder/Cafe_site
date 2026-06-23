@@ -15,6 +15,7 @@
   --color-accent: hsl(32, 92%, 95%);
   --color-accent-foreground: hsl(15, 10%, 16%);
   --color-border: hsl(30, 20%, 88%);
+  --radius-squircle: 1.5rem;
 }
 
 body {
