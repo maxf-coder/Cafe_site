@@ -9,3 +9,6 @@ __pycache__/
 /src/backend/static/
 media/
 notes
+node_modules
+dist
+*.local
