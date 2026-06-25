@@ -8,6 +8,15 @@ export const translations = {
       orderNow: 'Comenzi:',
     },
     menu: {
+      categories: {
+        appetizers: "appetizers",
+        salads: "salads",
+        soups: "soups",
+        main_courses: "main_courses",
+        pasta: "pasta",
+        desserts: "desserts", 
+        drinks: "drinks",
+      },
       more: 'Mai mult',
     },
     footer: {
