@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { I18nProvider } from "@/i18n/context"
-import { Navbar } from "@/components/layout/Navbar"
+import AppLayout from "@/components/layout/AppLayout"
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
             <Route path="caritate" element={<Caritate />} />
           </Route>
         </Routes> */}
-        <Navbar />
+        <AppLayout />
       </BrowserRouter>
     </I18nProvider>
   )
