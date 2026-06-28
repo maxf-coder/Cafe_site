@@ -53,7 +53,7 @@ class PageHero(models.Model):
     page = models.OneToOneField(Page, on_delete=models.CASCADE, related_name="hero")
     main_text = models.CharField(max_length=50, blank=True, default="")
     secondary_text = models.CharField(max_length=150, blank=True, default="")
-    img_src = models.ImageField(upload_to="heroes/", null=True, blank=True)
+    img_src = models.ImageField(upload_to="heroes/")
     alt_text = models.CharField(max_length=200, blank=True, default="")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
