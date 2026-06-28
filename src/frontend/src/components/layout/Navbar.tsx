@@ -4,6 +4,8 @@ import { useI18n } from '@/i18n/context';
 import type { Lang } from "@/i18n/context"
 import { Phone, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { fetchSettigs } from '@/api/settings';
 
 const languages = ['RO', 'EN', 'RU'];
 
@@ -11,6 +13,11 @@ export default function Navbar() {
   const { lang, setLang, t } = useI18n();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const {data: settings} = useQuery({
+    queryKey: ["settings", lang],
+    queryFn: fetchSettigs,
+  })
 
   const navLinks = [
     { path: '/', label: t('nav.menu') },
@@ -58,12 +65,12 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             {/* Phone */}
             <a
-              href="tel:+37360123456"
+              href={`tel:${settings?.phone || ""}`}
               className="flex items-center gap-2 text-secondary font-body text-sm font-medium hover:text-primary transition-colors duration-300"
             >
               <Phone className="w-4 h-4" />
               <span className="text-xs text-muted-foreground mr-1">{t('nav.orderNow')}</span>
-              +373 60 123456
+              {settings?.phone || ""}
             </a>
 
             {/* Language Switcher */}
@@ -120,11 +127,11 @@ export default function Navbar() {
               ))}
 
               <a
-                href="tel:+37360123456"
+                href={`tel:${settings?.phone || ""}`}
                 className="flex items-center gap-2 px-4 py-3 text-secondary font-body text-sm font-medium"
               >
                 <Phone className="w-4 h-4" />
-                +373 60 123456
+                {settings?.phone || ""}
               </a>
 
               <div className="flex items-center gap-1 px-4 py-2">

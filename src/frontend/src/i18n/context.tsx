@@ -12,7 +12,13 @@ export type Lang = "ro" | "en" | "ru"
 const I18nContext = createContext<I18nContextType | null>(null);
 
 export function I18nProvider({ children }: {children: React.ReactNode}) {
-  const [lang, setLang] = useState<Lang>('ro');
+  const [lang, setLang] = useState<Lang>(() => {
+    return (localStorage.getItem("lang") as Lang) || "ro";
+  });
+  const setLangAndPersist = (newLang: Lang) => {
+  localStorage.setItem('lang', newLang);
+  setLang(newLang);
+  };
   const t = (path: string) => {
     const keys = path.split('.');
     let result: Record<string, unknown> = translations[lang];
@@ -22,7 +28,7 @@ export function I18nProvider({ children }: {children: React.ReactNode}) {
     return typeof result === "string" ? result : "";
   };
   return (
-    <I18nContext.Provider value={{ lang, setLang, t }}>
+    <I18nContext.Provider value={{ lang, setLang: setLangAndPersist, t }}>
       {children}
     </I18nContext.Provider>
   );
