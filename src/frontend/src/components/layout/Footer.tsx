@@ -2,15 +2,22 @@ import { useI18n } from '@/i18n/context';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
 import { FaInstagram, FaFacebook } from 'react-icons/fa'
 import { useQuery } from '@tanstack/react-query';
-import { fetchSettigs } from '@/api/settings';
+import { fetchSettings } from '@/api/settings';
+import { fetchImages } from '@/api/images';
 
 export default function Footer() {
   const { t, lang } = useI18n();
 
   const { data: settings } = useQuery({
     queryKey: ["settings", lang],
-    queryFn: fetchSettigs,
+    queryFn: fetchSettings,
   })
+
+  const {data: images} = useQuery({
+      queryKey: ["images"],
+      queryFn: fetchImages,
+      staleTime: Infinity,
+    })
 
   return (
     <footer className="bg-secondary text-secondary-foreground mt-20">
@@ -20,8 +27,8 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src="https://media.base44.com/images/public/6a0982e2e3691dc690c8f67d/ff04397a9_generated_80e908ea.png"
-                alt="Fiesta Gastro Cafe"
+                src={images?.logo?.src || "/placeholderLogo.png"}
+                alt={images?.logo?.alt || ""}
                 className="h-12 w-12 rounded-squircle object-cover"
               />
               <span className="font-heading font-semibold text-xl text-white">

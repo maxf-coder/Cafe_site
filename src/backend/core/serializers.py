@@ -137,7 +137,10 @@ class SiteImageSerializer(serializers.Serializer):
         result = {}
         for item in queryset:
             if item.img_src and request:
-                result[item.key] = request.build_absolute_uri(item.img_src.url)
+                result[item.key] = {
+                    "src": request.build_absolute_uri(item.img_src.url),
+                    "alt": item.alt_text if item.alt_text else "",
+                }
             else:
                 result[item.key] = None
         return result

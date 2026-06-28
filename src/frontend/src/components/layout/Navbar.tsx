@@ -5,7 +5,8 @@ import type { Lang } from "@/i18n/context"
 import { Phone, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import { fetchSettigs } from '@/api/settings';
+import { fetchSettings } from '@/api/settings';
+import { fetchImages } from '@/api/images';
 
 const languages = ['RO', 'EN', 'RU'];
 
@@ -16,7 +17,13 @@ export default function Navbar() {
 
   const {data: settings} = useQuery({
     queryKey: ["settings", lang],
-    queryFn: fetchSettigs,
+    queryFn: fetchSettings,
+  })
+
+  const {data: images} = useQuery({
+    queryKey: ["images"],
+    queryFn: fetchImages,
+    staleTime: Infinity,
   })
 
   const navLinks = [
@@ -35,8 +42,8 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <img
-              src="https://media.base44.com/images/public/6a0982e2e3691dc690c8f67d/ff04397a9_generated_80e908ea.png"
-              alt="Fiesta Gastro Cafe"
+              src={images?.logo?.src || "/placeholderLogo.png"}
+              alt={images?.logo?.alt || ""}
               className="h-10 lg:h-12 w-10 lg:w-12 rounded-squircle object-cover"
             />
             <span className="font-heading font-semibold text-lg lg:text-xl text-secondary hidden sm:block">
