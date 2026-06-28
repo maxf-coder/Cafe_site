@@ -73,7 +73,7 @@ Stores individual menu items within a category.
 
 ## Core App Models
 
-### SiteSettings
+### SiteSetting
 
 Global site configuration (phone, email, address, social links, etc.).
 
@@ -91,7 +91,23 @@ Global site configuration (phone, email, address, social links, etc.).
 
 **Meta:** `verbose_name_plural = 'Site settings'`
 
-**Common keys:** `phone`, `email`, `address`, `address_url`, `schedule_weekdays`, `schedule_weekends`, `social_facebook`, `social_instagram`, `logo_url`
+**Common keys:** `phone`, `email`, `address`, `address_url`, `schedule_weekdays`, `schedule_weekends`, `social_facebook`, `social_instagram`
+
+---
+
+### SiteImage
+
+Stores site-wide images (logo, favicon, etc.). One row per image.
+
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
+| `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
+| `key` | CharField(50) | Unique, Required | Image identifier (e.g., "logo", "favicon") |
+| `img_src` | ImageField | Required, upload_to='site/' | Image file |
+| `alt_text` | CharField(200) | Blank | Accessibility alt text |
+| `description` | CharField(200) | Blank | Human-readable description |
+
+**Meta:** `verbose_name_plural = 'Site images'`
 
 ---
 
@@ -287,7 +303,8 @@ Page ──1:N── PageSection (parent)
 
 MenuCategory ──1:N── MenuProduct
 
-SiteSettings (standalone key-value store)
+SiteSetting (standalone key-value store)
+SiteImage (standalone key-image store)
 ```
 
 ---
@@ -296,7 +313,7 @@ SiteSettings (standalone key-value store)
 
 1. **PageHero as OneToOne** - Each page has exactly one hero. Clean separation from Page model.
 2. **Multi-table inheritance with `django-polymorphic`** - Each section type gets its own database table with explicit typed fields (ImageField, HTMLField, URLField). `django-polymorphic` ensures that querying the parent table returns actual child class instances, so no manual type dispatch is needed.
-3. **SiteSettings as key-value** - Simple, extensible. Adding a new setting requires no schema changes.
+3. **SiteSetting/SiteImage as key-value** - Simple, extensible. Adding a new setting or image requires no schema changes.
 4. **sort_order on sortable models** - Categories, products, sections, cards, and reels all have explicit ordering.
 5. **is_active/is_published flags** - Hide content without deleting. Supports draft workflows.
 6. **alt_text on all image fields** - WCAG 2.1 AA accessibility compliance.

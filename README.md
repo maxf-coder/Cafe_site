@@ -45,7 +45,7 @@ uv run python manage.py runserver
 src/backend/
 ├── cafe_project/   # settings, urls, middleware, OpenAPI schema
 ├── menu/           # categories, products, translations
-├── core/           # pages, sections, settings, translations
+├── core/           # pages, sections, settings, site images, translations
 ├── logs/           # rotating log files (auto-created)
 └── manage.py
 ```

@@ -209,6 +209,7 @@ const apiClient = axios.create({
 export const getMenuCategories = () => apiClient.get('/api/menu/categories/');
 export const getPage = (slug: string) => apiClient.get(`/api/pages/${slug}/`);
 export const getSettings = () => apiClient.get('/api/settings/');
+export const getSiteImages = () => apiClient.get('/api/site-images/');
 ```
 
 ---

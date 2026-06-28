@@ -184,14 +184,35 @@ interface SiteSettings {
 ```
 
 ---
+    
+### 4. GET /api/v1/site-images/
+
+Returns all site images (logo, favicon, etc.) as a flat object with absolute URLs.
+
+**Response:**
+```json
+{
+  "logo": "http://localhost:8000/media/site/logo.png",
+  "favicon": "http://localhost:8000/media/site/favicon.ico"
+}
+```
+
+**TypeScript Interface:**
+```typescript
+interface SiteImages {
+  [key: string]: string | null;
+}
+```
+
+---
 
 ## Additional Endpoints
 
-### 4. GET /api/v1/schema/ (DEBUG only)
+### 5. GET /api/v1/schema/ (DEBUG only)
 
 Returns the raw OpenAPI schema as JSON. Used by Swagger UI.
 
-### 5. GET /api/v1/docs/ (DEBUG only)
+### 6. GET /api/v1/docs/ (DEBUG only)
 
 Swagger UI documentation interface with interactive endpoint testing. Includes a `lang` dropdown on every endpoint.
 
@@ -324,6 +345,7 @@ interface SiteSettings {
 | `/api/v1/menu/categories/` | 5 minutes | Categories and products change rarely |
 | `/api/v1/pages/{slug}/` | 5 minutes | Content updates via admin |
 | `/api/v1/settings/` | Until invalidation | Invalidate on settings change |
+| `/api/v1/site-images/` | Until invalidation | Invalidate on image change |
 
 ---
 

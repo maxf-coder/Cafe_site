@@ -33,7 +33,7 @@ src/backend/
 │   ├── __init__.py
 │   ├── admin.py              # Django admin registration
 │   ├── apps.py               # App configuration
-│   ├── models.py             # Page, PageHero, PageSection (PolymorphicModel), WideImageSection, VideoSection, TightImageSection (+ TightImageCard), ReelsSection (+ ReelItem)
+│   ├── models.py             # SiteImage, SiteSetting, Page, PageHero, PageSection (PolymorphicModel), WideImageSection, VideoSection, TightImageSection (+ TightImageCard), ReelsSection (+ ReelItem)
 │   ├── translation.py        # modeltranslation registration
 │   ├── migrations/           # Database migrations
 │   │   ├── 0001_initial.py
@@ -42,9 +42,9 @@ src/backend/
 │   │   ├── 0004_*            # Add polymorphic_ctype field
 │   │   ├── 0005_*            # Populate polymorphic_ctype for existing rows
 │   │   └── 0006_*            # Add modeltranslation language columns
-│   ├── serializers.py        # Polymorphic section serializer, PageDetailSerializer, SiteSettingsSerializer
-│   ├── urls.py               # /api/v1/pages/<slug>/, /api/v1/settings/
-│   └── views.py              # PageDetailView, SiteSettingsView
+│   ├── serializers.py        # Polymorphic section serializer, PageDetailSerializer, SiteSettingSerializer, SiteImageSerializer
+│   ├── urls.py               # /api/v1/pages/<slug>/, /api/v1/settings/, /api/v1/site-images/
+│   └── views.py              # PageDetailView, SiteSettingView, SiteImageView
 ├── logs/                     # Rotating log files (auto-created)
 └── static/                   # Collected static files (gitignored)
 ```
@@ -72,12 +72,12 @@ src/backend/
 
 | File | Purpose |
 |------|---------|
-| `models.py` | `SiteSettings`, `Page`, `PageHero`, `PageSection` (base), `WideImageSection`, `VideoSection`, `TightImageSection` (+ `TightImageCard`), `ReelsSection` (+ `ReelItem`) |
+| `models.py` | `SiteImage`, `SiteSetting`, `Page`, `PageHero`, `PageSection` (base), `WideImageSection`, `VideoSection`, `TightImageSection` (+ `TightImageCard`), `ReelsSection` (+ `ReelItem`) |
 | `translation.py` | modeltranslation `TranslationOptions` for translatable fields |
 | `admin.py` | Admin interface with `SortableAdminBase`, `SortableStackedInline`, and `TabularInline` for section reordering |
-| `serializers.py` | All serializers: `PageHeroSerializer`, polymorphic `PageSectionSerializer` (dispatches via `isinstance`), `PageDetailSerializer`, flat-object `SiteSettingsSerializer` |
-| `urls.py` | `api/v1/pages/<slug:slug>/` (PageDetailView), `api/v1/settings/` (SiteSettingsView) |
-| `views.py` | `PageDetailView` (RetrieveAPIView, `lookup_field="slug"`), `SiteSettingsView` (ListAPIView with custom `get_serializer`) |
+| `serializers.py` | All serializers: `PageHeroSerializer`, polymorphic `PageSectionSerializer` (dispatches via `isinstance`), `PageDetailSerializer`, flat-object `SiteSettingSerializer`, flat-object `SiteImageSerializer` |
+| `urls.py` | `api/v1/pages/<slug:slug>/` (PageDetailView), `api/v1/settings/` (SiteSettingView), `api/v1/site-images/` (SiteImageView) |
+| `views.py` | `PageDetailView` (RetrieveAPIView, `lookup_field="slug"`), `SiteSettingView` (ListAPIView with custom `get_serializer`), `SiteImageView` (ListAPIView with custom `get_serializer`) |
 
 ---
 
@@ -155,7 +155,8 @@ Root (cafe_project/urls.py)
 ├── /tinymce/               → TinyMCE editor content CSS
 ├── /api/v1/menu/categories/  → MenuCategoryViewSet (categories with nested products)
 ├── /api/v1/pages/<slug>/     → PageDetailView (published page with hero + typed sections)
-├── /api/v1/settings/         → SiteSettingsView (flat key-value object)
+├── /api/v1/settings/         → SiteSettingView (flat key-value object)
+├── /api/v1/site-images/      → SiteImageView (flat key-image object, absolute URLs)
 ├── /api/v1/schema/           → drf-spectacular OpenAPI schema (DEBUG only)
 └── /api/v1/docs/             → Swagger UI (DEBUG only)
 ```

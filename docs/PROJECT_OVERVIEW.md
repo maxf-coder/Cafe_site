@@ -61,12 +61,13 @@ Cafe_site/
 - [ ] Footer with contact info, schedule, social links
 - [x] Django Admin panel for content management (backend models + admin ready)
 - [x] Site settings key-value store (model + admin ready)
+- [x] Site images key-image store (model + admin + endpoint ready)
 - [x] Multi-language content model (RO/EN/RU via django-modeltranslation)
 - [x] API endpoint language switching (?lang= query parameter)
 - [x] Request logging (console + rotating file)
 - [x] Admin protections (slugs locked on edit, pages undeletable)
 
-**Status:** Backend API layer is complete — serializers, views, URLs, drf-spectacular schema, language middleware, logging, and 10 tests are implemented and passing. Frontend is not yet built.
+**Status:** Backend API layer is complete — serializers, views, URLs, drf-spectacular schema, language middleware, logging, 10 tests plus SiteImage/SiteSetting models and endpoints are implemented and passing. Frontend is not yet built.
 
 ### Out of Scope
 - [ ] Online ordering or shopping cart
