@@ -91,18 +91,18 @@ Global site configuration (phone, email, address, social links, etc.).
 
 **Meta:** `verbose_name_plural = 'Site settings'`
 
-**Common keys:** `phone`, `email`, `address`, `address_url`, `schedule_weekdays`, `schedule_weekends`, `social_facebook`, `social_instagram`
+**Expected keys (frontend depends on):** `phone`, `email`, `address`, `working_days`, `weekend_days`, `mission`, `facebook_link`, `instagram_link`
 
 ---
 
 ### SiteImage
 
-Stores site-wide images (logo, favicon, etc.). One row per image.
+Stores site-wide images. One row per image. The frontend expects a `logo` image key.
 
 | Field | Type | Constraints | Description |
 |-------|------|-------------|-------------|
 | `id` | UUIDField | Primary Key, default=uuid4 | Unique identifier |
-| `key` | CharField(50) | Unique, Required | Image identifier (e.g., "logo", "favicon") |
+| `key` | CharField(50) | Unique, Required | Image identifier (e.g., `"logo"`) |
 | `img_src` | ImageField | Required, upload_to='site/' | Image file |
 | `alt_text` | CharField(200) | Blank | Accessibility alt text |
 | `description` | CharField(200) | Blank | Human-readable description |

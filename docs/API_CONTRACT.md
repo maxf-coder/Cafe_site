@@ -161,18 +161,30 @@ Returns a published page with hero and all published sections.
 
 ### 3. GET /api/v1/settings/
 
-Returns all site settings as a flat JSON object.
+Returns all site settings as a flat JSON object. Keys are defined in the database — the frontend expects the following keys to exist:
 
-**Response:**
+| Key | Purpose |
+|-----|---------|
+| `phone` | Phone number for order CTA |
+| `email` | Contact email |
+| `address` | Physical address |
+| `working_days` | Weekday schedule text |
+| `weekend_days` | Weekend schedule text |
+| `mission` | Cafe mission statement |
+| `facebook_link` | Facebook page URL |
+| `instagram_link` | Instagram profile URL |
+
+**Example Response:**
 ```json
 {
   "phone": "+40 7XX XXX XXX",
   "email": "contact@caferazesu.ro",
   "address": "Strada Exemplu, Nr. 1, București",
-  "facebook_url": "https://facebook.com/caferazesu",
-  "tiktok_url": "https://tiktok.com/@caferazesu",
-  "working_hours": "L-V: 08:00 - 22:00, S-D: 10:00 - 00:00",
-  "footer_copyright": "© 2026 Cafe Răzeșu. Toate drepturile rezervate."
+  "working_days": "Luni - Vineri: 08:00 - 22:00",
+  "weekend_days": "Sâmbătă - Duminică: 10:00 - 00:00",
+  "mission": "Servim pasiune în fiecare farfurie.",
+  "facebook_link": "https://facebook.com/caferazesu",
+  "instagram_link": "https://instagram.com/@caferazesu"
 }
 ```
 
@@ -187,20 +199,27 @@ interface SiteSettings {
     
 ### 4. GET /api/v1/site-images/
 
-Returns all site images (logo, favicon, etc.) as a flat object with absolute URLs.
+Returns all site images as a flat object. Each value contains `src` (absolute URL) and `alt` (alt text). The frontend expects a `logo` key.
 
 **Response:**
 ```json
 {
-  "logo": "http://localhost:8000/media/site/logo.png",
-  "favicon": "http://localhost:8000/media/site/favicon.ico"
+  "logo": {
+    "src": "http://localhost:8000/media/site/logo.png",
+    "alt": "Fiesta Gastro Cafe Logo"
+  }
 }
 ```
 
 **TypeScript Interface:**
 ```typescript
+interface SiteImageEntry {
+  src: string;
+  alt: string;
+}
+
 interface SiteImages {
-  [key: string]: string | null;
+  [key: string]: SiteImageEntry | null;
 }
 ```
 
