@@ -27,6 +27,7 @@ class SiteSettingView(ListAPIView):
 
 
 class SiteImageView(ListAPIView):
+    include_lang_parameter = False
     queryset = SiteImage.objects.all()
     serializer_class = SiteImageSerializer
 
