@@ -36,7 +36,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-secondary-foreground/70 text-sm font-body leading-relaxed">
-              ${settings?.mission || ""}
+              {settings?.mission || ""}
             </p>
           </div>
 
@@ -92,7 +92,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/10 text-center">
-          <p className="text-secondary-foreground/50 text-xs font-body">{t('footer.rights')}</p>
+          <p className="text-secondary-foreground/50 text-xs font-body">{settings?.footer_copyright || ""}</p>
         </div>
       </div>
     </footer>

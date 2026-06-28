@@ -24,7 +24,6 @@ export const translations = {
       schedule: 'Program de lucru',
       address: 'Adresa',
       social: 'Rețele sociale',
-      rights: '© 2026 Fiesta Gastro Cafe. Toate drepturile rezervate.',
     },
     common: {
       showMore: 'Citește mai mult',
@@ -48,7 +47,6 @@ export const translations = {
       schedule: 'Work Schedule',
       address: 'Address',
       social: 'Social Media',
-      rights: '© 2026 Fiesta Gastro Cafe. All rights reserved.',
     },
     common: {
       showMore: 'Read more',
@@ -72,7 +70,6 @@ export const translations = {
       schedule: 'Режим работы',
       address: 'Адрес',
       social: 'Социальные сети',
-      rights: '© 2026 Fiesta Gastro Cafe. Все права защищены.',
     },
     common: {
       showMore: 'Читать далее',

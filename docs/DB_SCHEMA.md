@@ -91,7 +91,7 @@ Global site configuration (phone, email, address, social links, etc.).
 
 **Meta:** `verbose_name_plural = 'Site settings'`
 
-**Expected keys (frontend depends on):** `phone`, `email`, `address`, `working_days`, `weekend_days`, `mission`, `facebook_link`, `instagram_link`
+**Expected keys (frontend depends on):** `phone`, `email`, `address`, `working_days`, `weekend_days`, `mission`, `facebook_link`, `instagram_link`, `footer_copyright`
 
 ---
 

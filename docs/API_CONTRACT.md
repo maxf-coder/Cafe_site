@@ -173,6 +173,7 @@ Returns all site settings as a flat JSON object. Keys are defined in the databas
 | `mission` | Cafe mission statement |
 | `facebook_link` | Facebook page URL |
 | `instagram_link` | Instagram profile URL |
+| `footer_copyright` | Copyright notice in footer |
 
 **Example Response:**
 ```json
@@ -184,7 +185,8 @@ Returns all site settings as a flat JSON object. Keys are defined in the databas
   "weekend_days": "Sâmbătă - Duminică: 10:00 - 00:00",
   "mission": "Servim pasiune în fiecare farfurie.",
   "facebook_link": "https://facebook.com/caferazesu",
-  "instagram_link": "https://instagram.com/@caferazesu"
+  "instagram_link": "https://instagram.com/@caferazesu",
+  "footer_copyright": "© 2026 Cafe Răzeșu. Toate drepturile rezervate."
 }
 ```
 
