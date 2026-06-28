@@ -1,7 +1,7 @@
 import logging
 from rest_framework.generics import RetrieveAPIView, ListAPIView
-from .models import Page, SiteSettings
-from .serializers import PageDetailSerializer, SiteSettingsSerializer
+from .models import Page, SiteSetting, SiteImage
+from .serializers import PageDetailSerializer, SiteSettingSerializer, SiteImageSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +12,9 @@ class PageDetailView(RetrieveAPIView):
     lookup_field = "slug"
 
 
-class SiteSettingsView(ListAPIView):
-    queryset = SiteSettings.objects.all()
-    serializer_class = SiteSettingsSerializer
+class SiteSettingView(ListAPIView):
+    queryset = SiteSetting.objects.all()
+    serializer_class = SiteSettingSerializer
 
     def get_serializer(self, *args, **kwargs):
         kwargs["many"] = False
@@ -23,4 +23,18 @@ class SiteSettingsView(ListAPIView):
     def list(self, request, *args, **kwargs):
         response = super().list(request, *args, **kwargs)
         logger.info("Site settings fetched: %d keys", len(response.data))
+        return response
+
+
+class SiteImageView(ListAPIView):
+    queryset = SiteImage.objects.all()
+    serializer_class = SiteImageSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        kwargs["many"] = False
+        return super().get_serializer(*args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        logger.info("Site images fetched: %d keys", len(response.data))
         return response

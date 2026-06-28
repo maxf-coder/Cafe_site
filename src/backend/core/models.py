@@ -3,7 +3,23 @@ from django.db import models
 from tinymce.models import HTMLField
 from polymorphic.models import PolymorphicModel
 
-class SiteSettings(models.Model):
+class SiteImage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=50, unique=True)
+    description = models.CharField(max_length=200, blank=True, default="")
+    img_src = models.ImageField(upload_to="site/")
+    alt_text = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    class Meta:
+        verbose_name_plural = "Site images"
+
+    def __str__(self):
+        return self.key
+
+class SiteSetting(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     key = models.CharField(max_length=50, unique=True)
     value = models.TextField()

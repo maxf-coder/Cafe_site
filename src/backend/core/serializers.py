@@ -4,7 +4,6 @@ from .models import (
     WideImageSection, VideoSection,
     TightImageSection, TightImageCard,
     ReelsSection, ReelItem,
-    SiteSettings,
 )
 
 
@@ -128,6 +127,17 @@ class PageDetailSerializer(serializers.ModelSerializer):
         fields = ["name", "slug", "hero", "sections"]
 
 
-class SiteSettingsSerializer(serializers.Serializer):
+class SiteSettingSerializer(serializers.Serializer):
     def to_representation(self, queryset):
         return {item.key: item.value for item in queryset}
+    
+class SiteImageSerializer(serializers.Serializer):
+    def to_representation(self, queryset):
+        request = self.context.get("request")
+        result = {}
+        for item in queryset:
+            if item.img_src and request:
+                result[item.key] = request.build_absolute_uri(item.img_src.url)
+            else:
+                result[item.key] = None
+        return result

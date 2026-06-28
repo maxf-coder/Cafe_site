@@ -1,7 +1,8 @@
 from django.contrib import admin
 from adminsortable2.admin import SortableAdminBase, SortableStackedInline
 from .models import (
-    SiteSettings,
+    SiteImage,
+    SiteSetting,
     Page,
     PageHero,
     WideImageSection,
@@ -12,7 +13,11 @@ from .models import (
     ReelsSection,
 )
 
-@admin.register(SiteSettings)
+@admin.register(SiteImage)
+class SiteImageAdmin(admin.ModelAdmin):
+    list_display = ("key", "description")
+
+@admin.register(SiteSetting)
 class SiteSettingAdmin(admin.ModelAdmin):
     list_display = ("key", "description")
 

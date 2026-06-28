@@ -7,7 +7,7 @@ from .models import (
     TightImageSection,
     TightImageCard,
     ReelsSection,
-    SiteSettings,
+    SiteSetting,
 )
 
 
@@ -39,7 +39,7 @@ class ReelsSectionTranslationOptions(TranslationOptions):
     fields = ("title",)
 
 
-class SiteSettingsTranslationOptions(TranslationOptions):
+class SiteSettingTranslationOptions(TranslationOptions):
     fields = ("value",)
 
 
@@ -50,4 +50,4 @@ translator.register(VideoSection, VideoSectionTranslationOptions)
 translator.register(TightImageSection, TightImageSectionTranslationOptions)
 translator.register(TightImageCard, TightImageCardTranslationOptions)
 translator.register(ReelsSection, ReelsSectionTranslationOptions)
-translator.register(SiteSettings, SiteSettingsTranslationOptions)
+translator.register(SiteSetting, SiteSettingTranslationOptions)
