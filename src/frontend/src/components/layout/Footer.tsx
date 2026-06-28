@@ -27,7 +27,7 @@ export default function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <img
-                src={images?.logo?.src || "/placeholderLogo.png"}
+                src={images?.logo?.src || "/images/placeholderLogo.png"}
                 alt={images?.logo?.alt || ""}
                 className="h-12 w-12 rounded-squircle object-cover"
               />
@@ -66,8 +66,8 @@ export default function Footer() {
               <div className="flex items-start gap-3 text-sm text-secondary-foreground/80">
                 <Clock className="w-4 h-4 mt-0.5 shrink-0" />
                 <div>
-                  <p>{settings?.working_days}</p>
-                <p>{settings?.weekend_days}</p>
+                  <p className="whitespace-pre-wrap">{settings?.working_days}</p>
+                  <p className="whitespace-pre-wrap">{settings?.weekend_days}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 text-sm text-secondary-foreground/80">

@@ -42,7 +42,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <img
-              src={images?.logo?.src || "/placeholderLogo.png"}
+              src={images?.logo?.src || "/images/placeholderLogo.png"}
               alt={images?.logo?.alt || ""}
               className="h-10 lg:h-12 w-10 lg:w-12 rounded-squircle object-cover"
             />
@@ -57,7 +57,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-4 py-2 rounded-squircle font-body text-sm font-medium transition-all duration-300 ${
+                className={`px-4 py-2 rounded-squircle font-body text-sm font-medium transition-all duration-300 text-center ${
                   isActive(link.path)
                     ? 'bg-primary text-primary-foreground shadow-md'
                     : 'text-foreground hover:bg-accent hover:text-primary'
