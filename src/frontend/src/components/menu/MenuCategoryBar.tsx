@@ -51,7 +51,7 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
     setDropdownOpen(false);
   };
 
-  const isHiddenActive = hiddenKeys.includes(activeCategory);
+  const isHiddenActive = hiddenKeys.some((cat) => cat.slug === activeCategory);
 
   return (
     <div className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border/40">
@@ -59,34 +59,34 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
 
         {/* Mobile: horizontal scroll */}
         <div className="flex md:hidden gap-1 py-3 overflow-x-auto scrollbar-hide">
-          {categoryKeys.map((key) => (
+          {menuCategories.map((cat) => (
             <button
-              key={key}
-              onClick={() => scrollTo(key)}
+              key={cat.slug}
+              onClick={() => scrollTo(cat.slug)}
               className={`whitespace-nowrap px-4 py-2 rounded-squircle font-body text-sm font-medium transition-all duration-300 shrink-0 ${
-                activeCategory === key
+                activeCategory === cat.slug
                   ? 'bg-secondary text-secondary-foreground shadow-md'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {key}
+              {cat.name}
             </button>
           ))}
         </div>
 
         {/* Desktop: fixed visible + More dropdown */}
         <div className="hidden md:flex items-center gap-1 py-3">
-          {visibleKeys.map((key) => (
+          {visibleKeys.map((cat) => (
             <button
-              key={key}
-              onClick={() => scrollTo(key)}
+              key={cat.slug}
+              onClick={() => scrollTo(cat.slug)}
               className={`whitespace-nowrap px-4 py-2 rounded-squircle font-body text-sm font-medium transition-all duration-300 ${
-                activeCategory === key
+                activeCategory === cat.slug
                   ? 'bg-secondary text-secondary-foreground shadow-md'
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {key}
+              {cat.name}
             </button>
           ))}
 
@@ -115,17 +115,17 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
                   transition={{ duration: 0.18 }}
                   className="absolute top-full left-0 mt-2 bg-background border border-border rounded-squircle shadow-xl overflow-hidden min-w-[160px] z-50"
                 >
-                  {hiddenKeys.map((key) => (
+                  {hiddenKeys.map((cat) => (
                     <button
-                      key={key}
-                      onClick={() => scrollTo(key)}
+                      key={cat.slug}
+                      onClick={() => scrollTo(cat.slug)}
                       className={`w-full text-left px-4 py-2.5 font-body text-sm transition-colors duration-200 ${
-                        activeCategory === key
+                        activeCategory === cat.slug
                           ? 'bg-secondary text-secondary-foreground font-semibold'
                           : 'text-foreground hover:bg-accent'
                       }`}
                     >
-                      {key}
+                      {cat.name}
                     </button>
                   ))}
                 </motion.div>

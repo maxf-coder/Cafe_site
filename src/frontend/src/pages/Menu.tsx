@@ -25,12 +25,10 @@ export default function Menu() {
     queryFn: fetchMenuCategories,
   })
 
-  const categoryKeys = menuCategories?.map(c => c.name) || []
-
   return (
     <div>
       {(page?.hero || false) && <Hero heroData={page.hero}/>}
-      <MenuCategoryBar categoryKeys={categoryKeys}/>
+      <MenuCategoryBar menuCategories={menuCategories ?? []}/>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
         {(menuCategories ?? []).map((categoryData) => (

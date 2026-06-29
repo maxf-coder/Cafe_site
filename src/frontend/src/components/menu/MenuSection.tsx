@@ -13,7 +13,7 @@ export default function MenuSection({
 
 
   return (
-    <section id={categoryData.id} className="scroll-mt-36">
+    <section id={categoryData.slug} className="scroll-mt-36">
       <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-6">
         {categoryData.name}
       </h2>
