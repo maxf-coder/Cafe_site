@@ -18,7 +18,7 @@ export type PageHero  = {
 
 type SectionType = 'wide_image' | 'tight_image' | 'video' | 'reels';
 
-type WideImageContent = {
+export type WideImageContent = {
   id: string;
   title: string;
   short_description: string;
@@ -35,24 +35,24 @@ type TightImageCard = {
   alt_text: string;
 }
 
-type TightImageContent = {
+export type TightImageContent = {
   id: string;
   title: string;
   cards: TightImageCard[];
 }
 
-type VideoContent = {
+export type VideoContent = {
   id: string;
   title: string;
   video_url: string;
   description: string;
 }
 
-type ReelItem = {
+export type ReelItem = {
   video_url: string;
 }
 
-type ReelsContent = {
+export type ReelsContent = {
   id: string;
   title: string;
   reels: ReelItem[];
@@ -60,7 +60,7 @@ type ReelsContent = {
 
 type SectionContent = WideImageContent | TightImageContent | VideoContent | ReelsContent;
 
-type PageSection = {
+export type PageSection = {
   id: string;
   type: SectionType;
   content: SectionContent;

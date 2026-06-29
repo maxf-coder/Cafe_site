@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { VideoContent } from '@/types/api';
+import getYoutubeId from '@/utils/getYoutubeId';
 
-export default function VideoSection(
-    { title, subtitle, youtubeId, thumbnailUrl }:
-    { title: string, subtitle: string, youtubeId: string, thumbnailUrl: string }
-) {
+export default function VideoSection( { content }: {content: VideoContent}) {
   const [playing, setPlaying] = useState(false);
+  const youtubeId = getYoutubeId(content.video_url)
 
   return (
     <motion.div
@@ -16,13 +16,13 @@ export default function VideoSection(
       transition={{ duration: 0.5 }}
       className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"
     >
-      {(title || subtitle) && (
+      {(content.title || content.description) && (
         <div className="mb-5">
-          {title && (
-            <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground">{title}</h2>
+          {content.title && (
+            <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground">{content.title}</h2>
           )}
-          {subtitle && (
-            <p className="font-body text-muted-foreground mt-1 text-sm md:text-base">{subtitle}</p>
+          {content.description && (
+            <p className="font-body text-muted-foreground mt-1 text-sm md:text-base">{content.description}</p>
           )}
         </div>
       )}
@@ -32,7 +32,7 @@ export default function VideoSection(
           <iframe
             className="absolute inset-0 w-full h-full"
             src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
-            title={title || 'Video'}
+            title={content.title || 'Video'}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
@@ -40,8 +40,8 @@ export default function VideoSection(
         ) : (
           <>
             <img
-              src={thumbnailUrl}
-              alt={title || 'Video'}
+              src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+              alt={content.title || 'Video'}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {/* Overlay */}
