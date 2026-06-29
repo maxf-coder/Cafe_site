@@ -1,16 +1,14 @@
 import { useRef, useState } from 'react';
 import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import type { ReelsContent } from '@/types/api';
+import type { ReelItem } from '@/types/api';
+import { getYoutubeEmbedingUrl, getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos';
 
-export type Reel = {
-    thumbnail: string
-    label: string
-    youtubeId: string | null
-}
-
-export default function ReelsCarousel({ title, reels }: { title: string, reels: Reel[]}) {
+export default function ReelsCarousel({ content }: { content: ReelsContent}) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [activeReel, setActiveReel] = useState<Reel | null>(null);
+  const [activeReel, setActiveReel] = useState<ReelItem | null>(null);
+
 
   const scroll = (dir: number) => {
     const el = scrollRef.current;
@@ -28,8 +26,8 @@ export default function ReelsCarousel({ title, reels }: { title: string, reels: 
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
-        {title && (
-          <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground">{title}</h2>
+        {content.title && (
+          <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground">{content.title}</h2>
         )}
         <div className="flex gap-2">
           <button
@@ -55,7 +53,11 @@ export default function ReelsCarousel({ title, reels }: { title: string, reels: 
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: 'x mandatory' }}
       >
-        {reels.map((reel, idx) => (
+        {content.reels.map((reel, idx) => {
+          const youtubeId = getYoutubeId(reel.video_url)
+          const reelTumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
+
+          return (
           <div
             key={idx}
             className="shrink-0 relative cursor-pointer group"
@@ -65,8 +67,7 @@ export default function ReelsCarousel({ title, reels }: { title: string, reels: 
             <div className="aspect-[9/16] w-full rounded-squircle overflow-hidden bg-accent shadow-md
               transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
               <img
-                src={reel.thumbnail}
-                alt={reel.label}
+                src={reelTumbnailUrl}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* overlay */}
@@ -79,13 +80,8 @@ export default function ReelsCarousel({ title, reels }: { title: string, reels: 
                 </div>
               </div>
             </div>
-            {reel.label && (
-              <p className="mt-2 text-xs font-body font-medium text-muted-foreground text-center leading-tight px-1">
-                {reel.label}
-              </p>
-            )}
           </div>
-        ))}
+        )})}
       </div>
 
       {/* Lightbox modal */}
@@ -98,17 +94,16 @@ export default function ReelsCarousel({ title, reels }: { title: string, reels: 
             className="relative w-[min(90vw,380px)] aspect-[9/16] rounded-squircle overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {activeReel.youtubeId ? (
+            {getYoutubeId(activeReel.video_url) ? (
               <iframe
                 className="w-full h-full"
-                src={`https://www.youtube.com/embed/${activeReel.youtubeId}?autoplay=1&rel=0`}
-                title={activeReel.label}
+                src={getYoutubeEmbedingUrl(activeReel.video_url)}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             ) : (
-              <img src={activeReel.thumbnail} alt={activeReel.label} className="w-full h-full object-cover" />
+              <img src={getYoutubeTumbnailUrl(activeReel.video_url)} className="w-full h-full object-cover" />
             )}
             <button
               onClick={() => setActiveReel(null)}

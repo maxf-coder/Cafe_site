@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { VideoContent } from '@/types/api';
-import getYoutubeId from '@/utils/getYoutubeId';
+import { getYoutubeEmbedingUrl, getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos';
 
 export default function VideoSection( { content }: {content: VideoContent}) {
   const [playing, setPlaying] = useState(false);
   const youtubeId = getYoutubeId(content.video_url)
+  const embedingUrl = getYoutubeEmbedingUrl(content.video_url)
+  const thumbnailUrl = getYoutubeTumbnailUrl(content.video_url)
 
   return (
     <motion.div
@@ -31,7 +33,7 @@ export default function VideoSection( { content }: {content: VideoContent}) {
         {playing && youtubeId ? (
           <iframe
             className="absolute inset-0 w-full h-full"
-            src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0`}
+            src={embedingUrl}
             title={content.title || 'Video'}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -40,7 +42,7 @@ export default function VideoSection( { content }: {content: VideoContent}) {
         ) : (
           <>
             <img
-              src={`https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`}
+              src={thumbnailUrl}
               alt={content.title || 'Video'}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
