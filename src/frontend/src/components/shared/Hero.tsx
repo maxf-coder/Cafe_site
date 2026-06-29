@@ -1,12 +1,12 @@
 import { motion } from 'framer-motion';
+import type { PageHero } from '@/types/api';
 
-export default function MenuHero() {
-
+export default function Hero( { heroData }: {heroData: PageHero}) {
   return (
     <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
       <img
-        src="https://media.base44.com/images/public/6a0982e2e3691dc690c8f67d/b4e239754_generated_f8432ab5.png"
-        alt="Fiesta Gastro Cafe"
+        src={heroData.img_src}
+        alt={heroData.alt_text}
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/30 to-transparent" />
@@ -18,10 +18,10 @@ export default function MenuHero() {
           className="text-center px-4"
         >
           <h1 className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 drop-shadow-lg">
-            Example Hero title
+            {heroData.main_text}
           </h1>
           <p className="font-body text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow">
-            Example Hero Subtitle
+            {heroData.secondary_text}
           </p>
         </motion.div>
       </div>

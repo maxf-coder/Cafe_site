@@ -1,12 +1,12 @@
 import { useI18n } from '@/i18n/context';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { MenuItem } from "./ProductCard"
+import type { MenuProduct } from '@/types/api';
 
-export default function ProductModal({ item, onClose }: { item: MenuItem, onClose: () => void}) {
-  const { lang, t } = useI18n();
+export default function ProductModal({ product, onClose }: { product: MenuProduct, onClose: () => void}) {
+  const { t } = useI18n();
 
-  if (!item) return null;
+  if (!product) return null;
 
   return (
     <AnimatePresence>
@@ -42,8 +42,8 @@ export default function ProductModal({ item, onClose }: { item: MenuItem, onClos
           {/* Image */}
           <div className="aspect-[4/3] w-full overflow-hidden rounded-t-[2rem] sm:rounded-t-squircle">
             <img
-              src={item.image}
-              alt={item.name[lang]}
+              src={product.img_src}
+              alt={product.alt_text}
               className="w-full h-full object-cover"
             />
           </div>
@@ -52,22 +52,20 @@ export default function ProductModal({ item, onClose }: { item: MenuItem, onClos
           <div className="p-6 space-y-4">
             <div className="flex items-start justify-between gap-4">
               <h2 className="font-heading font-bold text-xl md:text-2xl text-foreground">
-                {item.name[lang]}
+                {product.name}
               </h2>
               <span className="font-heading font-bold text-xl text-secondary shrink-0">
-                {item.price} MDL
+                {product.price} MDL
               </span>
             </div>
 
-            {item.weight && (
+            {product.weight_g && (
               <span className="inline-block text-xs text-muted-foreground bg-accent px-3 py-1 rounded-full font-body">
-                {item.weight}
+                {product.weight_g}
               </span>
             )}
 
-            <p className="font-body text-sm text-muted-foreground leading-relaxed">
-              {item.fullDesc[lang]}
-            </p>
+            <div dangerouslySetInnerHTML={{ __html: product.full_description}} />
 
             <button
               onClick={onClose}

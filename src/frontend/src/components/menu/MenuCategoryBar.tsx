@@ -1,19 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
-import { useI18n } from '@/i18n/context';
 import { ChevronDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useI18n } from '@/i18n/context';
+import type { MenuCategory } from '@/types/api';
 
-const categoryKeys = ['appetizers', 'salads', 'soups', 'main_courses', 'pasta', 'desserts', 'drinks'];
-// On desktop show first 5 inline, rest go in "More" dropdown
-const VISIBLE_COUNT = 5;
-const visibleKeys = categoryKeys.slice(0, VISIBLE_COUNT);
-const hiddenKeys = categoryKeys.slice(VISIBLE_COUNT);
-
-export default function MenuCategoryBar() {
-  const { t } = useI18n();
+export default function MenuCategoryBar( { menuCategories }: { menuCategories: MenuCategory[]}) {
   const [activeCategory, setActiveCategory] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { t } = useI18n()
+  // On desktop show first 5 inline, rest go in "More" dropdown
+  const VISIBLE_COUNT = 5;
+  const visibleKeys = menuCategories.slice(0, VISIBLE_COUNT);
+  const hiddenKeys = menuCategories.slice(VISIBLE_COUNT);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -24,12 +23,12 @@ export default function MenuCategoryBar() {
       },
       { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
     );
-    categoryKeys.forEach((key) => {
-      const el = document.getElementById(key);
+    menuCategories.forEach((cat) => {
+      const el = document.getElementById(cat.slug);
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [menuCategories]);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -70,7 +69,7 @@ export default function MenuCategoryBar() {
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {t(`menu.categories.${key}`)}
+              {key}
             </button>
           ))}
         </div>
@@ -87,7 +86,7 @@ export default function MenuCategoryBar() {
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {t(`menu.categories.${key}`)}
+              {key}
             </button>
           ))}
 
@@ -101,7 +100,7 @@ export default function MenuCategoryBar() {
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {isHiddenActive ? t(`menu.categories.${activeCategory}`) : t('menu.more')}
+              {isHiddenActive ? activeCategory : t('menu.more')}
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
               />
@@ -126,7 +125,7 @@ export default function MenuCategoryBar() {
                           : 'text-foreground hover:bg-accent'
                       }`}
                     >
-                      {t(`menu.categories.${key}`)}
+                      {key}
                     </button>
                   ))}
                 </motion.div>

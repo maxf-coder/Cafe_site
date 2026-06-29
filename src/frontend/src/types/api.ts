@@ -73,7 +73,7 @@ export type ContentPageResponse = {
   sections: PageSection[];
 }
 
-type MenuProduct = {
+export type MenuProduct = {
   id: string;
   name: string;
   slug: string;
