@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { I18nProvider } from "@/i18n/context"
 import AppLayout from "@/components/layout/AppLayout"
 import Menu from "@/pages/Menu"
-import AboutUs from "@/pages/AboutUs"
+import ContentPage from "./pages/ContentPage"
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,9 +22,7 @@ function App() {
           <Routes>
             <Route element={<AppLayout />}>
               <Route index element={<Menu />} />
-              <Route path="despre-noi" element={<AboutUs />} />
-              {/* <Route path="evenimente" element={<Evenimente />} />
-              <Route path="caritate" element={<Caritate />} /> */}
+              <Route path="/content/:slug" element={<ContentPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -33,6 +33,7 @@ export default function Menu() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
         {(menuCategories ?? []).map((categoryData) => (
           <MenuSection
+            key={categoryData.slug}
             categoryData={categoryData}
             onProductClick={setSelectedProduct }
           />

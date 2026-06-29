@@ -28,9 +28,9 @@ export default function Navbar() {
 
   const navLinks = [
     { path: '/', label: t('nav.menu') },
-    { path: '/despre-noi', label: t('nav.about') },
-    { path: '/evenimente', label: t('nav.events') },
-    { path: '/caritate', label: t('nav.charity') },
+    { path: '/content/despre-noi', label: t('nav.about') },
+    { path: '/content/evenimente', label: t('nav.events') },
+    { path: '/content/caritate', label: t('nav.charity') },
   ];
 
   const isActive = (path: string) => location.pathname === path;

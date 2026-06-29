@@ -27,7 +27,7 @@ export type WideImageContent = {
   alt_text: string;
 }
 
-type TightImageCard = {
+export type TightImageCard = {
   title: string;
   short_description: string;
   full_description: string;
