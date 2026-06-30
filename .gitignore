@@ -12,3 +12,4 @@ notes
 node_modules
 dist
 *.local
+src/backend/menu/management/

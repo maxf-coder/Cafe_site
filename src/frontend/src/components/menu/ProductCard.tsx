@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
 import type {MenuProduct} from "@/types/api"
 
 type ProductCardProps = {
@@ -32,13 +31,9 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       {/* Content */}
       <div className="p-4 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-heading font-semibold text-sm md:text-base text-foreground leading-tight">
+          <h2 className="font-heading font-semibold text-sm md:text-base text-foreground leading-tight">
             {product.name}
-          </h3>
-          <div className="shrink-0 w-8 h-8 rounded-full bg-primary flex items-center justify-center
-            group-hover:scale-110 transition-transform duration-300 shadow-sm">
-            <Plus className="w-4 h-4 text-primary-foreground" />
-          </div>
+          </h2>
         </div>
 
         <p className="font-body text-xs text-muted-foreground line-clamp-2 leading-relaxed">
@@ -50,7 +45,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
             {product.price} MDL
           </span>
           {product.weight_g && (
-            <span className="text-xs text-muted-foreground font-body">{product.weight_g}</span>
+            <span className="text-xs text-muted-foreground font-body">{product.weight_g} g</span>
           )}
         </div>
       </div>

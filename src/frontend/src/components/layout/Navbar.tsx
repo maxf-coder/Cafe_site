@@ -29,7 +29,7 @@ export default function Navbar() {
   const navLinks = [
     { path: '/', label: t('nav.menu') },
     { path: '/content/despre-noi', label: t('nav.about') },
-    { path: '/content/evenimente', label: t('nav.events') },
+    { path: '/content/evenimente-out-door', label: t('nav.events') },
     { path: '/content/caritate', label: t('nav.charity') },
   ];
 

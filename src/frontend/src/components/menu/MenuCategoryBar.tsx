@@ -100,7 +100,7 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
                   : 'text-muted-foreground hover:bg-accent hover:text-foreground'
               }`}
             >
-              {isHiddenActive ? activeCategory : t('menu.more')}
+              {isHiddenActive ? menuCategories.find(c => c.slug === activeCategory)?.name : t('menu.more')}
               <ChevronDown
                 className={`w-4 h-4 transition-transform duration-300 ${dropdownOpen ? 'rotate-180' : ''}`}
               />

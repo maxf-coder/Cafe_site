@@ -10,7 +10,7 @@ class MenuProductInline(SortableStackedInline):
 @admin.register(MenuCategory)
 class MenuCategoryAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = ("name", "slug", "sort_order", "is_active")
-    list_editable = ("sort_order", "is_active")
+    list_editable = ("is_active", )
     inlines = [MenuProductInline]
 
     def get_readonly_fields(self, request, obj=None):

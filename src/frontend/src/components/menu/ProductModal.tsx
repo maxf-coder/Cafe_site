@@ -61,11 +61,14 @@ export default function ProductModal({ product, onClose }: { product: MenuProduc
 
             {product.weight_g && (
               <span className="inline-block text-xs text-muted-foreground bg-accent px-3 py-1 rounded-full font-body">
-                {product.weight_g}
+                {product.weight_g} g
               </span>
             )}
 
-            <div dangerouslySetInnerHTML={{ __html: product.full_description}} />
+            <div
+              className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:p-2 [&_th]:bg-accent"
+              dangerouslySetInnerHTML={{ __html: product.full_description}}
+            />
 
             <button
               onClick={onClose}

@@ -1,15 +1,27 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import { useQuery } from '@tanstack/react-query';
+import { fetchImages } from '@/api/images';
 
 export default function AppLayout() {
+  const { data: images } = useQuery({
+    queryKey: ["images"],
+    queryFn: fetchImages,
+    staleTime: Infinity,
+  });
+
+
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <Navbar />
-      <main className="flex-1">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+    <>
+      {images?.logo?.src && <link rel="icon" href={images.logo.src} />}
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }

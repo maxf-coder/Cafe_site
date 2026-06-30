@@ -26,6 +26,8 @@ export default function Menu() {
   })
 
   return (
+    <>
+    <title>Fiesta Gastro Cafe</title>
     <div>
       {(page?.hero || false) && <Hero heroData={page.hero}/>}
       <MenuCategoryBar menuCategories={menuCategories ?? []}/>
@@ -44,5 +46,6 @@ export default function Menu() {
         <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
       )}
     </div>
+    </>
   );
 }

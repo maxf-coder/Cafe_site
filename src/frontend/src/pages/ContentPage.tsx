@@ -16,9 +16,12 @@ export default function ContentPage() {
     })
 
     return (
-        <div>
-            {(page?.hero || false) && <Hero heroData={page.hero}/>}
-            <SectionRenderer sections={page?.sections || []} />
-        </div>
+        <>
+            {page?.name && <title>{page.name} | Fiesta Gastro Cafe</title>}
+            <div>
+                {(page?.hero || false) && <Hero heroData={page.hero}/>}
+                <SectionRenderer sections={page?.sections || []} />
+            </div>
+        </>
     )
 }
