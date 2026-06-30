@@ -9,25 +9,45 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { t } = useI18n()
-  // On desktop show first 5 inline, rest go in "More" dropdown
-  const VISIBLE_COUNT = 5;
-  const visibleKeys = menuCategories.slice(0, VISIBLE_COUNT);
-  const hiddenKeys = menuCategories.slice(VISIBLE_COUNT);
+  const [visibleCount, setVisibleCount] = useState(4);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveCategory(entry.target.id);
-        });
-      },
-      { rootMargin: '-120px 0px -60% 0px', threshold: 0 }
-    );
-    menuCategories.forEach((cat) => {
-      const el = document.getElementById(cat.slug);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
+    const update = () => setVisibleCount(window.innerWidth >= 1024 ? 5 : 4);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const visibleKeys = menuCategories.slice(0, visibleCount);
+  const hiddenKeys = menuCategories.slice(visibleCount);
+
+  const activeRef = useRef(activeCategory);
+  useEffect(() => {
+    activeRef.current = activeCategory;
+  }, [activeCategory]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offsetTop = 134;
+      const offsetBottom = 300;
+      const slugs = menuCategories.map((c) => c.slug);
+      let current = activeRef.current;
+
+      for (const slug of slugs) {
+        const el = document.getElementById(`detect-${slug}`);
+        if (!el) continue;
+        const top = el.getBoundingClientRect().top;
+        if (top >= offsetTop && top <= offsetBottom) {
+          current = slug;
+          break;
+        }
+      }
+      setActiveCategory(current);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [menuCategories]);
 
   // Close dropdown on outside click
@@ -54,7 +74,7 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
   const isHiddenActive = hiddenKeys.some((cat) => cat.slug === activeCategory);
 
   return (
-    <div className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border/40">
+    <div className="sticky top-16 lg:top-20 z-40 bg-background/95 backdrop-blur-md border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Mobile: horizontal scroll */}
