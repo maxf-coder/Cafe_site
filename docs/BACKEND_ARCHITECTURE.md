@@ -102,7 +102,7 @@ INSTALLED_APPS = [
     "core",
     "adminsortable2",
     "drf_spectacular",
-]
+    "django_cleanup",          # Auto-deletes old files when ImageField changes
 ```
 
 **Notes:**

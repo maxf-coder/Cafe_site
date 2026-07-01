@@ -22,15 +22,14 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Django 6.x + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic |
-| **Frontend** | React 18 + Vite + TypeScript |
+| **Backend** | Django 6.0.5 + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic + django-cleanup |
+| **Frontend** | React 19 + Vite + TypeScript + Tailwind v4 + framer-motion + lucide-react |
 | **Database** | PostgreSQL |
-| **Styling** | Tailwind CSS + shadcn/ui |
-| **State Management** | TanStack Query (server state) + React Context (UI state) |
-| **Routing** | React Router |
+| **State Management** | TanStack Query (server state) + React Context (UI state / i18n) |
+| **Routing** | React Router v7 |
 | **i18n** | django-modeltranslation (backend) + Custom React Context (frontend) |
-| **Hosting** | Render |
-| **Media Storage** | Cloudinary (planned), local media (development) |
+| **Hosting** | Render (planned) |
+| **Media Storage** | Cloudinary (planned), local `media/` (development) |
 
 ## Project Structure
 
@@ -38,36 +37,43 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 Cafe_site/
 ├── docs/                    # Project documentation
 ├── src/
-│   └── backend/             # Django project
-│       ├── cafe_project/    # Django settings, urls, middleware, schema
-│       ├── menu/            # Menu app (categories, products, translations)
-│       ├── core/            # Core app (pages, sections, settings, translations)
-│       ├── logs/            # Rotating log files (auto-created)
-│       └── manage.py
-│                              (frontend/ — not yet created)
+│   ├── backend/             # Django project
+│   │   ├── cafe_project/    # Settings, urls, middleware, schema
+│   │   ├── menu/            # Menu app (categories, products, translations)
+│   │   ├── core/            # Core app (pages, sections, settings, translations)
+│   │   ├── logs/            # Rotating log files (auto-created)
+│   │   └── manage.py
+│   └── frontend/            # React project (Vite + TypeScript + Tailwind)
+│       ├── src/
+│       │   ├── api/         # Axios client + endpoint functions
+│       │   ├── components/  # layout, menu, content, shared components
+│       │   ├── i18n/        # Translation context + RO/EN/RU dicts
+│       │   ├── pages/       # Menu.tsx, ContentPage.tsx
+│       │   ├── types/       # TypeScript interfaces
+│       │   └── utils/       # Helpers
+│       ├── vite.config.ts
+│       └── package.json
 └── README.md
 ```
 
 ## Features
 
 ### In Scope
-- [ ] Menu page with categories and product cards (frontend not built)
-- [ ] Product detail modal (click any card)
-- [ ] About Us page (modular content sections)
-- [ ] Outdoor Events page (modular content sections)
-- [ ] Charity page (modular content sections)
-- [ ] Language switcher (RO/EN/RU)
-- [ ] Responsive navbar with phone CTA
-- [ ] Footer with contact info, schedule, social links
-- [x] Django Admin panel for content management (backend models + admin ready)
-- [x] Site settings key-value store (model + admin ready)
-- [x] Site images key-image store (model + admin + endpoint ready)
+- [x] Menu page with categories and product cards (frontend built)
+- [x] Product detail modal (click any card)
+- [x] About Us page (modular content sections from API)
+- [x] Outdoor Events page (modular content sections from API)
+- [x] Charity page (modular content sections from API)
+- [x] Language switcher (RO/EN/RU)
+- [x] Responsive navbar with phone CTA
+- [x] Footer with contact info, schedule, social links
+- [x] Django Admin panel for content management
+- [x] Site settings key-value store (model + admin + endpoint)
+- [x] Site images key-image store (model + admin + endpoint)
 - [x] Multi-language content model (RO/EN/RU via django-modeltranslation)
 - [x] API endpoint language switching (?lang= query parameter)
 - [x] Request logging (console + rotating file)
 - [x] Admin protections (slugs locked on edit, pages undeletable)
-
-**Status:** Backend API layer is complete — serializers, views, URLs, drf-spectacular schema, language middleware, logging, 10 tests plus SiteImage/SiteSetting models and endpoints are implemented and passing. Frontend is not yet built.
 
 ### Out of Scope
 - [ ] Online ordering or shopping cart

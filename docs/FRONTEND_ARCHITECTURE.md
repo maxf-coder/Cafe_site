@@ -1,7 +1,7 @@
 # Frontend Architecture
 
-> **⚠️ NOT YET IMPLEMENTED — Target architecture for when the React frontend is built.**
-> Currently no `src/frontend/` directory exists. This document is a planning reference.
+> ✅ **Implemented** — Vite + React 19 + TypeScript + Tailwind v4.
+> Dev server runs on `http://localhost:5173`, proxies API to `http://localhost:8000`.
 
 ## Project Structure
 
@@ -9,33 +9,52 @@
 src/frontend/
 ├── index.html
 ├── package.json
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
+├── vite.config.ts
 ├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
 └── src/
-    ├── main.tsx              # App entry point
-    ├── App.tsx               # Root component with routing
-    ├── api/                  # API client
-    │   ├── client.ts         # Axios instance
-    │   └── endpoints.ts      # API endpoint functions
-    ├── components/           # Reusable UI components
-    │   ├── layout/           # Navbar, Footer, AppLayout
-    │   ├── menu/             # MenuCategoryBar, MenuSection, ProductCard, ProductModal
-    │   ├── content/          # WideImageSection, TightImageGrid, VideoSection, ReelsCarousel
-    │   └── ui/               # shadcn/ui components
-    ├── hooks/                # Custom React hooks
-    │   └── use-mobile.tsx    # Mobile detection
-    ├── lib/                  # Utilities
-    │   ├── i18n.tsx          # Internationalization context
-    │   ├── query-client.ts   # TanStack Query configuration
-    │   ├── menuData.ts       # Menu data utilities
-    │   └── contentData.ts    # Content data utilities
-    └── pages/                # Page components
-        ├── Meniu.tsx
-        ├── DespreNoi.tsx
-        ├── Evenimente.tsx
-        └── Caritate.tsx
+    ├── main.tsx                  # Entry point (StrictMode → App)
+    ├── App.tsx                   # QueryClientProvider + I18nProvider + BrowserRouter
+    ├── index.css                 # Tailwind v4 import (@import "tailwindcss")
+    ├── api/                      # API client layer
+    │   ├── client.ts             # Axios instance (?lang= interceptor)
+    │   ├── contentPages.ts       # fetchContentPage(slug)
+    │   ├── images.ts             # fetchImages()
+    │   ├── menuCategories.ts     # fetchMenuCategories()
+    │   └── settings.ts           # fetchSettings()
+    ├── components/
+    │   ├── content/              # Content page sections
+    │   │   ├── SectionRenderer.tsx
+    │   │   ├── WideImageSection.tsx
+    │   │   ├── TightImageGrid.tsx
+    │   │   ├── VideoSection.tsx
+    │   │   └── ReelsCarousel.tsx
+    │   ├── layout/
+    │   │   ├── AppLayout.tsx     # Shell: Navbar + <Outlet/> + Footer
+    │   │   ├── Navbar.tsx        # Logo, links, phone CTA, language switcher
+    │   │   └── Footer.tsx        # Mission, contact, schedule, socials, copyright
+    │   ├── menu/
+    │   │   ├── Hero.tsx          # Home page hero from content page API
+    │   │   ├── MenuCategoryBar.tsx  # Sticky scrollspy category tabs
+    │   │   ├── MenuSection.tsx      # Product grid per category
+    │   │   ├── ProductCard.tsx      # Single product card
+    │   │   └── ProductModal.tsx     # Full product detail (HTML description)
+    │   └── shared/
+    │       └── Loader.tsx           # Loading spinner
+    ├── i18n/
+    │   ├── context.tsx           # I18nProvider, useI18n, useTranslation
+    │   └── translations.ts       # RO/EN/RU dictionaries (static strings)
+    ├── lib/
+    │   ├── contentData.ts        # Legacy static data (unused)
+    │   └── menuData.ts           # Legacy static data (unused)
+    ├── pages/
+    │   ├── Menu.tsx              # Hero + MenuCategoryBar + MenuSection per category
+    │   └── ContentPage.tsx       # Hero + SectionRenderer per section
+    ├── types/
+    │   └── api.ts                # TypeScript interfaces for all API responses
+    └── utils/
+        └── YoutubeVideos.ts      # YouTube ID extraction + auto thumbnail URL
 ```
 
 ---
@@ -44,14 +63,15 @@ src/frontend/
 
 | Technology | Purpose |
 |------------|---------|
-| React 18 | UI library |
+| React 19 | UI library (native `<title>`, `<link>` hoisting) |
 | TypeScript | Type safety |
 | Vite | Build tool and dev server |
-| Tailwind CSS | Utility-first styling |
-| shadcn/ui | Accessible component library |
-| React Router | Client-side routing |
-| TanStack Query | Server state management |
+| Tailwind v4 | Utility-first CSS (no config file needed) |
+| React Router v7 | Client-side routing |
+| TanStack Query v5 | Server state management |
 | Axios | HTTP client |
+| framer-motion | Animations (product modal, hover effects) |
+| lucide-react | Icons (Phone, Mail, MapPin, Globe, etc.) |
 
 ---
 
@@ -60,14 +80,21 @@ src/frontend/
 ```tsx
 <Routes>
   <Route element={<AppLayout />}>
-    <Route path="/" element={<Meniu />} />
-    <Route path="/despre-noi" element={<DespreNoi />} />
-    <Route path="/evenimente" element={<Evenimente />} />
-    <Route path="/caritate" element={<Caritate />} />
+    <Route index element={<Menu />} />                    {/* / */}
+    <Route path="/content/:slug" element={<ContentPage />} />  {/* /content/despre-noi */}
   </Route>
-  <Route path="*" element={<PageNotFound />} />
 </Routes>
 ```
+
+Only 2 routes:
+- `/` — Menu page (fetches page slug `meniu` for its hero)
+- `/content/:slug` — Dynamic content page (fetches page by slug from path)
+
+All navigations are hardcoded in `Navbar.tsx`:
+- `/` — Menu
+- `/content/despre-noi` — About
+- `/content/evenimente-out-door` — Events
+- `/content/caritate` — Charity
 
 ---
 
@@ -75,64 +102,45 @@ src/frontend/
 
 ### Server State (TanStack Query)
 
-Data from the API is managed by TanStack Query:
+All API data fetched via `useQuery` with these cache strategies:
 
-```typescript
-// Fetch and cache menu categories
-const { data: categories } = useQuery({
-  queryKey: ['menu-categories'],
-  queryFn: api.getMenuCategories,
-  staleTime: 5 * 60 * 1000, // 5 minutes
-});
-
-// Fetch page content
-const { data: page } = useQuery({
-  queryKey: ['page', slug],
-  queryFn: () => api.getPage(slug),
-  staleTime: 5 * 60 * 1000,
-});
-
-// Fetch settings (cache forever)
-const { data: settings } = useQuery({
-  queryKey: ['settings'],
-  queryFn: api.getSettings,
-  staleTime: Infinity,
-});
-```
+| Component | Query Key | staleTime | Re-fetches |
+|-----------|-----------|-----------|------------|
+| Menu page | `["menu", lang]` | 5 min | On language switch |
+| Menu page | `["page", "meniu", lang]` | 5 min | On language switch |
+| ContentPage | `["page", slug, lang]` | 5 min | On slug/lang change |
+| Navbar, Footer | `["settings", lang]` | Infinity | Never (manual invalidate) |
+| Navbar, Footer, AppLayout | `["images"]` | Infinity | Never (manual invalidate) |
 
 ### UI State (React Context)
 
 | Context | Purpose |
 |---------|---------|
-| `I18nProvider` | Language state (RO/EN/RU) and translation function |
-| Local state | Modal open/close, expanded sections, etc. |
+| `I18nProvider` | Language (`ro`/`en`/`ru`), setLang, t() translation function |
+| Local state | Modal open/close, expanded sections, scroll position, etc. |
 
 ---
 
 ## i18n Approach
 
-Custom React context-based i18n:
+Custom React context-based i18n with static dictionaries:
 
 ```typescript
-interface I18nContextType {
-  lang: 'ro' | 'en' | 'ru';
-  setLang: (lang: 'ro' | 'en' | 'ru') => void;
-  t: (path: string) => string;
-}
-
-// Usage:
-const { t, lang, setLang } = useI18n();
-const title = t('hero.title'); // Returns translated string
+// context.tsx — provides:
+{ lang, setLang, t }
+// t("nav.menu") → "Meniu" / "Menu" / "Меню"
 ```
 
-**Translation files** stored in `src/lib/translations/`:
-- `ro.ts` - Romanian (default)
-- `en.ts` - English
-- `ru.ts` - Russian
+**Translation files**: `src/i18n/translations.ts` — single file with `ro`, `en`, `ru` objects.
 
-**Fallback chain:** Missing translation → Romanian → placeholder key
+**Fallback chain**: missing key → Romanian → key name as fallback.
 
-**Persistence:** Language selection stored in `localStorage`
+**Persistence**: Language written to `localStorage("lang")` via `setLangAndPersist`.
+
+**Sync flow**: 
+1. App mounts → `useState` reads `localStorage` 
+2. Axios interceptor reads `localStorage` → appends `?lang=` to every request
+3. User toggles → `setLangAndPersist` updates state + `localStorage`
 
 ---
 
@@ -140,57 +148,61 @@ const title = t('hero.title'); // Returns translated string
 
 ```
 App
-└── I18nProvider
-    └── QueryClientProvider
+└── QueryClientProvider
+    └── I18nProvider
         └── BrowserRouter
             └── AppLayout
+                ├── <link rel="icon"> (React 19 native, from images?.logo?.src)
                 ├── Navbar
-                │   ├── Logo
-                │   ├── NavLinks
-                │   ├── PhoneCTA
-                │   └── LanguageSwitcher
-                ├── Main Content (Routes)
-                │   ├── Meniu
-                │   │   ├── MenuHero
-                │   │   ├── MenuCategoryBar
-                │   │   ├── MenuSection (per category)
-                │   │   │   └── ProductCard
-                │   │   └── ProductModal
-                │   ├── DespreNoi
-                │   │   ├── ContentPageHero
-                │   │   └── SectionRenderer
-                │   │       ├── WideImageSection
-                │   │       ├── TightImageGrid
-                │   │       ├── VideoSection
-                │   │       └── ReelsCarousel
-                │   ├── Evenimente (same structure)
-                │   └── Caritate (same structure)
+                │   ├── Logo (images?.logo?.src)
+                │   ├── NavLinks (hardcoded routes)
+                │   ├── PhoneCTA (settings?.phone)
+                │   └── LanguageSwitcher (RO/EN/RU)
+                ├── <Outlet /> — one of:
+                │   ├── Menu (/) 
+                │   │   ├── Hero (from page slug "meniu")
+                │   │   ├── MenuCategoryBar (sticky scrollspy)
+                │   │   ├── MenuSection × N (one per category)
+                │   │   │   └── ProductCard × N
+                │   │   └── ProductModal (overlay, HTML description)
+                │   └── ContentPage (/content/:slug)
+                │       ├── Hero (from page API)
+                │       └── SectionRenderer × N
+                │           ├── WideImageSection
+                │           ├── TightImageGrid
+                │           ├── VideoSection
+                │           └── ReelsCarousel
                 └── Footer
-                    ├── ContactInfo
-                    ├── Schedule
-                    └── SocialLinks
+                    ├── Logo
+                    ├── Mission text
+                    ├── Contact (phone, email, address)
+                    ├── Schedule (working_days, weekend_days)
+                    ├── Social links (instagram, facebook)
+                    └── Copyright
 ```
 
 ---
 
 ## Section Rendering Pattern
 
-Content pages use a dynamic section renderer:
-
 ```tsx
 function SectionRenderer({ section }: { section: PageSection }) {
   switch (section.type) {
     case 'wide_image':
-      return <WideImageSection content={section.content as WideImageContent} />;
-    case 'tight_image':
-      return <TightImageGrid content={section.content as TightImageContent} />;
+      return <WideImageSection key={section.id} content={section.content} />;
+    case 'tight_image_grid':
+      return <TightImageGrid key={section.id} content={section.content} />;
     case 'video':
-      return <VideoSection content={section.content as VideoContent} />;
+      return <VideoSection key={section.id} content={section.content} />;
     case 'reels':
-      return <ReelsCarousel content={section.content as ReelsContent} />;
+      return <ReelsCarousel key={section.id} content={section.content} />;
+    default:
+      return null;
   }
 }
 ```
+
+Each section component receives `key` prop from `section.id` for stable reconciliation. Content types match the API contract's `section.type` field.
 
 ---
 
@@ -198,28 +210,32 @@ function SectionRenderer({ section }: { section: PageSection }) {
 
 ```typescript
 // api/client.ts
-import axios from 'axios';
-
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  timeout: 10000,
+  baseURL: "http://localhost:8000/api/v1/",
 });
 
-// api/endpoints.ts
-export const getMenuCategories = () => apiClient.get('/api/menu/categories/');
-export const getPage = (slug: string) => apiClient.get(`/api/pages/${slug}/`);
-export const getSettings = () => apiClient.get('/api/settings/');
-export const getSiteImages = () => apiClient.get('/api/site-images/');
+// Auto-append ?lang= from localStorage
+apiClient.interceptors.request.use((config) => {
+  const lang = localStorage.getItem("lang") || "ro";
+  config.params = { ...config.params, lang };
+  return config;
+});
+
+// api/endpoints
+fetchMenuCategories()   → GET /menu/categories/
+fetchContentPage(slug)  → GET /pages/{slug}/
+fetchSettings()         → GET /settings/
+fetchImages()           → GET /site-images/
 ```
 
 ---
 
 ## Styling
 
-- **Tailwind CSS** for utility-first styling
-- **shadcn/ui** for accessible base components (Button, Dialog, Card, etc.)
-- **Custom theme** in `tailwind.config.js` with cafe brand colors
-- **Responsive design** with mobile-first breakpoints
+- **Tailwind v4** — utility-first CSS, no `tailwind.config.js` (v4 uses CSS-based config via `@import "tailwindcss"`)
+- **Custom classes** in `index.css`: `rounded-squircle`, Tailwind prose for HTML descriptions
+- **framer-motion** — product modal overlay animation, card hover effects
+- **Responsive breakpoints**: mobile-first, `lg:` at 1024px for navbar height change
 
 ---
 
@@ -227,4 +243,16 @@ export const getSiteImages = () => apiClient.get('/api/site-images/');
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VITE_API_URL` | Backend API URL | `http://localhost:8000` |
+| `VITE_API_URL` | Backend API base URL (unused — hardcoded in client.ts) | `http://localhost:8000` |
+
+---
+
+## Key Design Decisions
+
+| Decision | Rationale |
+|----------|-----------|
+| React 19 native `<title>` hoisting | No `react-helmet` dependency needed |
+| Single `api/client.ts` with interceptor | Consistent language param on every request |
+| `useI18n()` throws if used outside provider | Catches bugs during development |
+| `dangerouslySetInnerHTML` for product descriptions | API returns raw HTML from TinyMCE |
+| Hero content fetched from API (not static) | Content editors can change hero text via admin |
