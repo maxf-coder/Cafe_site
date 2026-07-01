@@ -259,7 +259,7 @@ interface WideImageContent {
   title: string;
   short_description: string;
   full_description: string;
-  img_src: string;
+  img_src: string | null;
   alt_text: string;
 }
 
@@ -267,7 +267,7 @@ interface TightImageCard {
   title: string;
   short_description: string;
   full_description: string;
-  img_src: string;
+  img_src: string | null;
   alt_text: string;
 }
 
@@ -410,13 +410,15 @@ const { data: settings } = useQuery({
 function SectionRenderer({ section }: { section: PageSection }) {
   switch (section.type) {
     case 'wide_image':
-      return <WideImageSection content={section.content as WideImageContent} />;
+      return <WideImageSection key={section.id} content={section.content} />;
     case 'tight_image':
-      return <TightImageGrid content={section.content as TightImageContent} />;
+      return <TightImageGrid key={section.id} content={section.content} />;
     case 'video':
-      return <VideoSection content={section.content as VideoContent} />;
+      return <VideoSection key={section.id} content={section.content} />;
     case 'reels':
-      return <ReelsCarousel content={section.content as ReelsContent} />;
+      return <ReelsCarousel key={section.id} content={section.content} />;
+    default:
+      return null;
   }
 }
 ```

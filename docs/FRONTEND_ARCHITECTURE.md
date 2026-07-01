@@ -41,20 +41,19 @@ src/frontend/
     │   │   ├── ProductCard.tsx      # Single product card
     │   │   └── ProductModal.tsx     # Full product detail (HTML description)
     │   └── shared/
-    │       └── Loader.tsx           # Loading spinner
+    │       ├── Hero.tsx              # Page hero renderer (used by Menu + ContentPage)
+    │       ├── Loader.tsx            # Loading spinner
+    │       └── YoutubeThumbnail.tsx  # YouTube thumbnail with auto-fallback chain
     ├── i18n/
     │   ├── context.tsx           # I18nProvider, useI18n, useTranslation
     │   └── translations.ts       # RO/EN/RU dictionaries (static strings)
-    ├── lib/
-    │   ├── contentData.ts        # Legacy static data (unused)
-    │   └── menuData.ts           # Legacy static data (unused)
     ├── pages/
     │   ├── Menu.tsx              # Hero + MenuCategoryBar + MenuSection per category
     │   └── ContentPage.tsx       # Hero + SectionRenderer per section
     ├── types/
     │   └── api.ts                # TypeScript interfaces for all API responses
     └── utils/
-        └── YoutubeVideos.ts      # YouTube ID extraction + auto thumbnail URL
+        └── YoutubeVideos.ts      # YouTube ID extraction, embed URL builder, thumbnail URL builder with configurable size
 ```
 
 ---
@@ -206,6 +205,48 @@ Each section component receives `key` prop from `section.id` for stable reconcil
 
 ---
 
+## YouTube Thumbnail Fallback
+
+### The Problem
+
+`maxresdefault.jpg` (1280×720) is not generated for all videos. When missing, YouTube returns a **120×90 gray placeholder** with a valid JPEG body and HTTP 404. The browser fires `onload`, not `onerror` — so `onerror`-based fallbacks silently fail.
+
+### Solution: `YoutubeThumbnail` Component
+
+Located at `src/components/shared/YoutubeThumbnail.tsx`. Renders an `<img>` with a **fallback chain** of thumbnail sizes. On `onload`, checks `img.naturalWidth > 120` to distinguish a real thumbnail from the gray placeholder. If placeholder → advances to the next size in the chain.
+
+```tsx
+type ThumbnailSize = 'maxresdefault' | 'sddefault' | 'hqdefault' | 'mqdefault' | 'default'
+
+<YoutubeThumbnail
+  videoUrl={url}
+  sizes={['maxresdefault', 'sddefault', 'hqdefault']}  // fallback chain, highest first
+  className="..."
+  alt="..."
+/>
+```
+
+### Fallback Chains Used
+
+| Component | Chain | Behavior |
+|-----------|-------|----------|
+| `VideoSection` | `maxresdefault` → `sddefault` → `hqdefault` | Tries HD first, falls back to SD (640×480), then guaranteed HQ (480×360) |
+| `ReelsCarousel` | `hqdefault` (single) | 480×360 always exists, 2.7× oversampled at 180px card width — sharp enough |
+
+### Size Reference
+
+| Filename | Resolution | Aspect | Availability |
+|----------|-----------|--------|-------------|
+| `maxresdefault` | 1280×720 | 16:9 | ~90% of videos |
+| `sddefault` | 640×480 | 4:3 | ~99% of videos |
+| `hqdefault` | 480×360 | 4:3 letterboxed | **100%** |
+| `mqdefault` | 320×180 | 16:9 | 100% |
+| `default` | 120×90 | 4:3 | 100% |
+
+The `getYoutubeTumbnailUrl(video_url, size)` utility in `YoutubeVideos.ts` accepts an optional `size` parameter (defaults to `maxresdefault`).
+
+---
+
 ## API Client
 
 ```typescript
@@ -256,3 +297,4 @@ fetchImages()           → GET /site-images/
 | `useI18n()` throws if used outside provider | Catches bugs during development |
 | `dangerouslySetInnerHTML` for product descriptions | API returns raw HTML from TinyMCE |
 | Hero content fetched from API (not static) | Content editors can change hero text via admin |
+| YouTube thumbnail fallback via `naturalWidth > 120` | YouTube returns a 120×90 gray JPEG (not a network error) for missing `maxresdefault` — `onerror` never fires. `onload` + dimension check reliably detects the placeholder and falls back to `sddefault` or `hqdefault` |

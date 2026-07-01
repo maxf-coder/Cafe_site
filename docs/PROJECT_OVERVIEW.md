@@ -22,7 +22,7 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Django 6.0.5 + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic + django-cleanup |
+| **Backend** | Django 6.0.5 + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic + django-cleanup + adminsortable2 + django-tinymce |
 | **Frontend** | React 19 + Vite + TypeScript + Tailwind v4 + framer-motion + lucide-react |
 | **Database** | PostgreSQL |
 | **State Management** | TanStack Query (server state) + React Context (UI state / i18n) |
