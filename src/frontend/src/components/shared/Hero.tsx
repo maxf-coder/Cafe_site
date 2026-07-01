@@ -3,7 +3,7 @@ import type { PageHero } from '@/types/api';
 
 export default function Hero( { heroData }: {heroData: PageHero}) {
   return (
-    <section className="relative h-[50vh] md:h-[60vh] overflow-hidden">
+    <section className="relative h-[30vh] md:h-[40vh] lg:h-[50vh] xl:h-[60vh] 2xl:h-[70vh] overflow-hidden">
       <img
         src={heroData.img_src}
         alt={heroData.alt_text}

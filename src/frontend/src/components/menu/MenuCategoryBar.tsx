@@ -8,6 +8,7 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
   const [activeCategory, setActiveCategory] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileScrollRef = useRef<HTMLDivElement>(null);
   const { t } = useI18n()
   const [visibleCount, setVisibleCount] = useState(4);
 
@@ -24,6 +25,12 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
   const activeRef = useRef(activeCategory);
   useEffect(() => {
     activeRef.current = activeCategory;
+  }, [activeCategory]);
+
+  useEffect(() => {
+    if (!mobileScrollRef.current) return;
+    const btn = mobileScrollRef.current.querySelector(`[data-slug="${activeCategory}"]`);
+    if (btn) btn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
   }, [activeCategory]);
 
   useEffect(() => {
@@ -78,10 +85,11 @@ export default function MenuCategoryBar( { menuCategories }: { menuCategories: M
       <div className="max-w-7xl mx-auto px-4">
 
         {/* Mobile: horizontal scroll */}
-        <div className="flex md:hidden gap-1 py-3 overflow-x-auto scrollbar-hide">
+        <div ref={mobileScrollRef} className="flex md:hidden gap-1 py-3 overflow-x-auto scrollbar-hide">
           {menuCategories.map((cat) => (
             <button
               key={cat.slug}
+              data-slug={cat.slug}
               onClick={() => scrollTo(cat.slug)}
               className={`whitespace-nowrap px-4 py-2 rounded-squircle font-body text-sm font-medium transition-all duration-300 shrink-0 ${
                 activeCategory === cat.slug

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "core",
     "adminsortable2",
     "drf_spectacular",
+    "django_cleanup", 
 ]
 
 MIDDLEWARE = [

@@ -5,7 +5,18 @@ from adminsortable2.admin import SortableAdminMixin, SortableStackedInline
 class MenuProductInline(SortableStackedInline):
     model = MenuProduct
     extra = 0
-    prepopulated_fields = {"slug": ("name",)}
+    fieldsets = [
+        ("Data", {
+            "classes": ("collapse",),
+            "fields": (
+                "name_ro", "name_en", "name_ru",
+                "slug", "price", "weight_g", "is_active", "sort_order",
+                "short_description_ro", "short_description_en", "short_description_ru",
+                "full_description_ro", "full_description_en", "full_description_ru",
+                "img_src", "alt_text_ro", "alt_text_en", "alt_text_ru",
+            ),
+        }),
+    ]
 
 @admin.register(MenuCategory)
 class MenuCategoryAdmin(SortableAdminMixin, admin.ModelAdmin):
@@ -21,4 +32,4 @@ class MenuCategoryAdmin(SortableAdminMixin, admin.ModelAdmin):
     def get_prepopulated_fields(self, request, obj=None):
         if obj:
             return {}
-        return {"slug": ("name",)}
+        return {"slug": ("name_ro",)}
