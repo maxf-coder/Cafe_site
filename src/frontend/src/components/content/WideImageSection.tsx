@@ -14,7 +14,7 @@ export default function WideImageSection({ content }: { content: WideImageConten
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20"
     >
       <div className="bg-accent rounded-squircle overflow-hidden group">
         <div className="aspect-[16/7] overflow-hidden">
@@ -36,7 +36,12 @@ export default function WideImageSection({ content }: { content: WideImageConten
               exit={{ opacity: 0 }}
               className="font-body text-sm text-muted-foreground leading-relaxed"
             >
-              {expanded && content.full_description ? content.full_description : content.short_description}
+              {expanded && content.full_description ? 
+                <div
+                  className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:p-2 [&_th]:bg-accent"
+                  dangerouslySetInnerHTML={{ __html: content.full_description}}
+                /> 
+                : content.short_description}
             </motion.p>
           </AnimatePresence>
           {content.full_description && (

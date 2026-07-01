@@ -2,21 +2,20 @@ import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { VideoContent } from '@/types/api';
-import { getYoutubeEmbedingUrl, getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos';
+import { getYoutubeEmbedingUrl, getYoutubeId } from '@/utils/YoutubeVideos';
+import YoutubeThumbnail from '@/components/shared/YoutubeThumbnail';
 
 export default function VideoSection( { content }: {content: VideoContent}) {
   const [playing, setPlaying] = useState(false);
   const youtubeId = getYoutubeId(content.video_url)
   const embedingUrl = getYoutubeEmbedingUrl(content.video_url)
-  const thumbnailUrl = getYoutubeTumbnailUrl(content.video_url)
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20"
     >
       {(content.title || content.description) && (
         <div className="mb-5">
@@ -41,10 +40,10 @@ export default function VideoSection( { content }: {content: VideoContent}) {
           />
         ) : (
           <>
-            <img
-              src={thumbnailUrl}
-              alt={content.title || 'Video'}
+            <YoutubeThumbnail
+              videoUrl={content.video_url}
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              alt={content.title || 'Video'}
             />
             {/* Overlay */}
             <div className="absolute inset-0 bg-foreground/30 group-hover:bg-foreground/20 transition-colors duration-300" />

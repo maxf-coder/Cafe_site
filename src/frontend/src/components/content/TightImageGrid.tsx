@@ -29,7 +29,12 @@ function TightCard({ card }: { card: TightImageCard }) {
             exit={{ opacity: 0 }}
             className="font-body text-sm text-muted-foreground leading-relaxed"
           >
-            {expanded && card.full_description ? card.full_description : card.short_description}
+            {expanded && card.full_description ? 
+                <div
+                  className="prose prose-sm max-w-none [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 [&_a]:text-primary [&_a]:underline [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_th]:border [&_th]:border-border [&_th]:p-2 [&_th]:bg-accent"
+                  dangerouslySetInnerHTML={{ __html: card.full_description}}
+                /> 
+                : card.short_description}
           </motion.p>
         </AnimatePresence>
         {card.full_description && (
@@ -56,7 +61,7 @@ export default function TightImageGrid({ content }: { content: TightImageContent
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20"
     >
       {content.title && (
         <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground mb-6">{content.title}</h2>

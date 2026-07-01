@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import type { ReelsContent } from '@/types/api';
 import type { ReelItem } from '@/types/api';
 import { getYoutubeEmbedingUrl, getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos';
+import YoutubeThumbnail from '@/components/shared/YoutubeThumbnail';
 
 export default function ReelsCarousel({ content }: { content: ReelsContent}) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -22,7 +23,7 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-40px' }}
       transition={{ duration: 0.5 }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-16"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-20"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
@@ -53,11 +54,7 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
         className="flex gap-4 overflow-x-auto scrollbar-hide pb-2"
         style={{ scrollSnapType: 'x mandatory' }}
       >
-        {content.reels.map((reel, idx) => {
-          const youtubeId = getYoutubeId(reel.video_url)
-          const reelTumbnailUrl = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`
-
-          return (
+        {content.reels.map((reel, idx) => (
           <div
             key={idx}
             className="shrink-0 relative cursor-pointer group"
@@ -66,8 +63,9 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
           >
             <div className="aspect-[9/16] w-full rounded-squircle overflow-hidden bg-accent shadow-md
               transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
-              <img
-                src={reelTumbnailUrl}
+              <YoutubeThumbnail
+                videoUrl={reel.video_url}
+                sizes={['hqdefault']}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* overlay */}
@@ -81,7 +79,7 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
               </div>
             </div>
           </div>
-        )})}
+        ))}
       </div>
 
       {/* Lightbox modal */}

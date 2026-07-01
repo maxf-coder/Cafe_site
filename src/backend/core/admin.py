@@ -40,7 +40,18 @@ class VideoSectionAdmin(admin.ModelAdmin):
 class TightImageCardInline(SortableStackedInline):
     model = TightImageCard
     extra = 0
-
+    fieldsets = [
+        ("Data", {
+            "classes": ("collapse",),
+            "fields": (
+                "title_ro", "title_en", "title_ru",
+                "short_description_ro", "short_description_en", "short_description_ru",
+                "full_description_ro", "full_description_en", "full_description_ru",
+                "img_src", "alt_text_ro", "alt_text_en", "alt_text_ru",
+                "sort_order",
+            ),
+        }),
+    ]
 @admin.register(TightImageSection)
 class TightImageSectionAdmin(SortableAdminBase, admin.ModelAdmin):
     list_display = ("page", "title", "is_published")
