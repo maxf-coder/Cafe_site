@@ -20,7 +20,7 @@ export default function Hero( { heroData }: {heroData: PageHero}) {
           <h1 className="font-heading font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white mb-4 drop-shadow-lg">
             {heroData.main_text}
           </h1>
-          <p className="font-body text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow">
+          <p className="font-body text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto drop-shadow hidden md:block">
             {heroData.secondary_text}
           </p>
         </motion.div>

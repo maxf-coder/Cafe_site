@@ -29,6 +29,7 @@ export default function Footer() {
               <img
                 src={images?.logo?.src || "/images/placeholderLogo.png"}
                 alt={images?.logo?.alt || ""}
+                loading="lazy"
                 className="h-12 w-12 rounded-squircle object-cover"
               />
               <span className="font-heading font-semibold text-xl text-white">

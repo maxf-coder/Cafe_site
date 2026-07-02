@@ -21,6 +21,7 @@ export default function WideImageSection({ content }: { content: WideImageConten
           <img
             src={content.img_src}
             alt={content.alt_text}
+            loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>

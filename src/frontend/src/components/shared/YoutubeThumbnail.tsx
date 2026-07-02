@@ -31,6 +31,7 @@ export default function YoutubeThumbnail({ videoUrl, sizes = ['maxresdefault', '
     <img
       src={src}
       alt={alt || ''}
+      loading="lazy"
       className={className}
       onLoad={handleLoad}
     />

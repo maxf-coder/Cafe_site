@@ -24,6 +24,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         <img
           src={product.img_src}
           alt={product.alt_text}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
@@ -36,7 +37,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
           </h2>
         </div>
 
-        <p className="font-body text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+        <p className="font-body text-xs text-muted-foreground line-clamp-2 leading-relaxed hidden md:block">
           {product.short_description}
         </p>
 

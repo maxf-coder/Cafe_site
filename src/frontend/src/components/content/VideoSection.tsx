@@ -23,7 +23,7 @@ export default function VideoSection( { content }: {content: VideoContent}) {
             <h2 className="font-heading font-bold text-2xl md:text-3xl text-foreground">{content.title}</h2>
           )}
           {content.description && (
-            <p className="font-body text-muted-foreground mt-1 text-sm md:text-base">{content.description}</p>
+            <p className="font-body text-muted-foreground mt-1 text-sm md:text-base hidden md:block">{content.description}</p>
           )}
         </div>
       )}

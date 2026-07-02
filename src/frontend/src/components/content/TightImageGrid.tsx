@@ -14,6 +14,7 @@ function TightCard({ card }: { card: TightImageCard }) {
         <img
           src={card.img_src}
           alt={card.alt_text}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
