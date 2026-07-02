@@ -25,5 +25,4 @@ class MenuCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "slug", "products"]
 
     def get_products(self, obj):
-        qs = obj.products.filter(is_active=True)
-        return MenuProductSerializer(qs, many=True, context=self.context).data
+        return MenuProductSerializer(obj.products.all(), many=True, context=self.context).data
