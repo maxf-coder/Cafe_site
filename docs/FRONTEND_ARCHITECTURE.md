@@ -42,7 +42,8 @@ src/frontend/
     │   │   └── ProductModal.tsx     # Full product detail (HTML description)
     │   └── shared/
     │       ├── Hero.tsx              # Page hero renderer (used by Menu + ContentPage)
-    │       ├── Loader.tsx            # Loading spinner
+    │       ├── Loader.tsx            # Loading spinner (bouncing coffee cup)
+    │       ├── ErrorState.tsx        # Error display with optional retry button
     │       └── YoutubeThumbnail.tsx  # YouTube thumbnail with auto-fallback chain
     ├── i18n/
     │   ├── context.tsx           # I18nProvider, useI18n, useTranslation
@@ -244,6 +245,22 @@ type ThumbnailSize = 'maxresdefault' | 'sddefault' | 'hqdefault' | 'mqdefault' |
 | `default` | 120×90 | 4:3 | 100% |
 
 The `getYoutubeTumbnailUrl(video_url, size)` utility in `YoutubeVideos.ts` accepts an optional `size` parameter (defaults to `maxresdefault`).
+
+---
+
+## Loading / Error States
+
+Both `Menu.tsx` and `ContentPage.tsx` use the same pattern:
+
+```tsx
+if (isLoading) return <Loader />
+if (isError) return <ErrorState message={t('error.page')} onRetry={() => refetch()} />
+```
+
+- **Loader** — full-height centered column with a bouncing coffee cup icon (framer-motion) + loading text
+- **ErrorState** — full-height centered column with `AlertCircle` icon, message, and optional "Try again" button that calls `refetch()`
+
+Translation keys in `common.loading` and `error.*` (RO/EN/RU).
 
 ---
 
