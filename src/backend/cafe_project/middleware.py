@@ -15,7 +15,7 @@ class LanguageMiddleware:
 
         response = self.get_response(request)
 
-        logger.info(
+        logger.debug(
             "%s %s → %s [lang=%s]",
             request.method, request.path, response.status_code, lang,
         )

@@ -1,5 +1,7 @@
 import { fetchContentPage } from "@/api/contentPages";
 import Hero from "@/components/shared/Hero";
+import Loader from "@/components/shared/Loader";
+import ErrorState from "@/components/shared/ErrorState";
 import { useI18n } from "@/i18n/context";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -7,13 +9,19 @@ import SectionRenderer from "@/components/content/SectionRenderer";
 
 export default function ContentPage() {
     const { slug } = useParams<{ slug: string }>()
-    const { lang } = useI18n()
+    const { lang, t } = useI18n()
 
-    const { data: page} = useQuery({
+    const { data: page, isLoading, isError, refetch } = useQuery({
         queryKey: ["page", slug, lang],
         queryFn: () => fetchContentPage(slug!),
         enabled: !!slug,
     })
+
+    if (isLoading) return <Loader />
+
+    if (isError) return (
+        <ErrorState message={t('error.page')} onRetry={() => refetch()} />
+    )
 
     return (
         <>

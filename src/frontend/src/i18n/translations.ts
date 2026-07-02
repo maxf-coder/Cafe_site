@@ -29,6 +29,13 @@ export const translations = {
       showMore: 'Citește mai mult',
       showLess: 'Citește mai puțin',
       close: 'Închide',
+      loading: 'Se încarcă...',
+    },
+    error: {
+      default: 'Ceva nu a funcționat.',
+      menu: 'Nu s-a putut încărca meniul.',
+      page: 'Nu s-a putut încărca pagina.',
+      retry: 'Încearcă din nou',
     },
   },
   en: {
@@ -52,6 +59,13 @@ export const translations = {
       showMore: 'Read more',
       showLess: 'Read less',
       close: 'Close',
+      loading: 'Loading...',
+    },
+    error: {
+      default: 'Something went wrong.',
+      menu: 'Failed to load menu.',
+      page: 'Failed to load page.',
+      retry: 'Try again',
     },
   },
   ru: {
@@ -75,6 +89,13 @@ export const translations = {
       showMore: 'Читать далее',
       showLess: 'Свернуть',
       close: 'Закрыть',
+      loading: 'Загрузка...',
+    },
+    error: {
+      default: 'Что-то пошло не так.',
+      menu: 'Не удалось загрузить меню.',
+      page: 'Не удалось загрузить страницу.',
+      retry: 'Попробовать снова',
     },
   },
 };

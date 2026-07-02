@@ -14,7 +14,7 @@ export default function AppLayout() {
 
   return (
     <>
-      {images?.logo?.src && <link rel="icon" href={images.logo.src} />}
+      { (images?.logo?.src && <link rel="icon" href={images.logo.src} />) || (<link rel="icon" href="/images/placeholderLogo.png" />) }
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
         <main className="flex-1">
