@@ -13,3 +13,4 @@ node_modules
 dist
 *.local
 src/backend/menu/management/
+src/backend/core/management/

@@ -11,6 +11,7 @@ dependencies = [
     "django-cors-headers>=4.9.0",
     "django-modeltranslation>=0.20.3",
     "django-polymorphic>=4.11.5",
+    "django-storages[s3]>=1.14.6",
     "django-tinymce>=5.0.0",
     "djangorestframework>=3.17.1",
     "drf-spectacular>=0.29.0",
