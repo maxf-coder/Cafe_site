@@ -5,6 +5,7 @@
 The backend exposes read-only API endpoints. All responses are JSON. No authentication required.
 
 **Base URL (development):** `http://localhost:8000`
+**Base URL (production):** Set `VITE_API_URL` at frontend build time (e.g., `https://api.yourdomain.com/api/v1/`)
 
 ---
 
@@ -44,7 +45,7 @@ Returns menu categories sorted by `sort_order`, each with its products nested.
         "weight_g": 30,
         "short_description": "Cafea intensă, 30 ml",
         "full_description": "Un shot concentrat de cafea, extras la presiune înaltă din boabe 100% Arabica.",
-        "img_src": "http://localhost:8000/media/menu/espresso.jpg",
+        "img_src": "https://<r2-bucket>.r2.cloudflarestorage.com/cafe-media/menu/espresso.webp?X-Amz-Algorithm=...",
         "alt_text": ""
       }
     ]
@@ -90,7 +91,7 @@ Returns a published page with hero and all published sections.
   "hero": {
     "main_text": "Povestea Noastră",
     "secondary_text": "Un loc unde gustul întâlnește comunitatea",
-    "img_src": "http://localhost:8000/media/heroes/about.jpg",
+    "img_src": "https://<r2-bucket>.r2.cloudflarestorage.com/cafe-media/heroes/about.webp?X-Amz-Algorithm=...",
     "alt_text": "Echipa Fiesta Gastro Cafe"
   },
   "sections": [
@@ -102,7 +103,7 @@ Returns a published page with hero and all published sections.
         "title": "Bine ați venit la Fiesta",
         "short_description": "Servim pasiune în fiecare farfurie.",
         "full_description": "<p>Fondată în 2020, Fiesta Gastro Cafe...</p>",
-        "img_src": "http://localhost:8000/media/sections/wide_image/welcome.jpg",
+        "img_src": "https://<r2-bucket>.r2.cloudflarestorage.com/cafe-media/sections/wide_image/welcome.webp?X-Amz-Algorithm=...",
         "alt_text": "Interiorul cafenelei"
       }
     },
@@ -117,7 +118,7 @@ Returns a published page with hero and all published sections.
             "title": "Bucătar Maria",
             "short_description": "10 ani experiență în bucătăria italiană.",
             "full_description": "<p>Maria a studiat la Roma...</p>",
-            "img_src": "http://localhost:8000/media/sections/tight_image/maria.jpg",
+            "img_src": "https://<r2-bucket>.r2.cloudflarestorage.com/cafe-media/sections/tight_image/maria.webp?X-Amz-Algorithm=...",
             "alt_text": "Bucătarul Maria"
           }
         ]
@@ -207,7 +208,7 @@ Returns all site images as a flat object. Each value contains `src` (absolute UR
 ```json
 {
   "logo": {
-    "src": "http://localhost:8000/media/site/logo.png",
+    "src": "https://<r2-bucket>.r2.cloudflarestorage.com/cafe-media/site/logo.webp?X-Amz-Algorithm=...",
     "alt": "Fiesta Gastro Cafe Logo"
   }
 }

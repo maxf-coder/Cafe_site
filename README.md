@@ -9,7 +9,7 @@ Multi-language website (RO/EN/RU) for a cafe — Django REST backend + React fro
 | **Backend** | Django 6.0.5 + DRF + drf-spectacular + django-modeltranslation + django-polymorphic + django-cleanup + django-admin-sortable2 + django-tinymce |
 | **Frontend** | React 19 + Vite + TypeScript + Tailwind v4 + TanStack Query + React Router + framer-motion + lucide-react |
 | **Database** | PostgreSQL |
-| **Hosting** | Render (planned), Cloudinary for media (planned) |
+| **Hosting** | Render (planned), Cloudflare R2 for media |
 
 ## Setup (from a fresh clone)
 
@@ -33,7 +33,16 @@ DATABASE_PORT=5432
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 CORS_ALLOWED_ORIGINS=http://localhost:5173
+CSRF_TRUSTED_ORIGINS=http://127.0.0.1:8000
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=cafe-media
+R2_ENDPOINT_URL=
+R2_CUSTOM_DOMAIN=
 EOF
+
+> Get `R2_*` credentials from Cloudflare Dashboard → R2 → Bucket → Manage.
+> Leave `R2_CUSTOM_DOMAIN` empty in dev (signed URLs only).
 
 # 3. Install dependencies
 uv sync
@@ -136,5 +145,6 @@ All read-only, `?lang=ro|en|ru` query param on every request.
 | `GET /api/v1/site-images/` | Flat key-image object (absolute URLs) |
 | `GET /api/v1/schema/` | OpenAPI schema (DEBUG only) |
 | `GET /api/v1/docs/` | Swagger UI (DEBUG only) |
+| `GET /api/v1/health/` | Health check (DB connection + JSON status) |
 
 See `docs/` for detailed documentation.

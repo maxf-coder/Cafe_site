@@ -1,6 +1,6 @@
 # Admin Guide
 
-> **URL**: `http://localhost:8000/admin/`
+> **URL**: `http://localhost:8000/cafe-admin/`
 > **Write path**: Django admin is the **only** way to create/edit content. The API is read-only.
 
 ---

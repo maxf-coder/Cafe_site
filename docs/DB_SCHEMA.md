@@ -321,3 +321,4 @@ SiteImage (standalone key-image store)
 8. **HTMLField (django-tinymce) for rich text** - WYSIWYG editor in admin using TinyMCE (Jazzband, MIT); stores valid HTML.
 9. **modeltranslation over parler** - modeltranslation v0.20.3 (Apr 2026) supports Django 6.0. Adds language columns (`_ro`, `_en`, `_ru`) in the same table — no extra joins. Admin tabs auto-generated.
 10. **Slugs not translated** - URL identifiers are always Romanian. Slugs are excluded from modeltranslation registration. Stable permalinks regardless of language.
+11. **Composite database indexes** - Common query patterns have composite indexes: `(category, is_active, sort_order)` on `MenuProduct`, `(page, is_published, sort_order)` on `PageSection`, `(section, sort_order)` on `TightImageCard` and `ReelItem`. Added `db_index=True` to all `sort_order` fields.

@@ -29,7 +29,7 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 | **Routing** | React Router v7 |
 | **i18n** | django-modeltranslation (backend) + Custom React Context (frontend) |
 | **Hosting** | Render (planned) |
-| **Media Storage** | Cloudinary (planned), local `media/` (development) |
+| **Media Storage** | Cloudflare R2 via django-storages[s3] |
 
 ## Project Structure
 
@@ -107,8 +107,8 @@ See `docs/BACKEND_ARCHITECTURE.md` for the full language configuration.
 
 ## Deployment (Planned)
 
-- **Backend**: Django + Gunicorn on Render
-- **Frontend**: Built React app served as static site on Render
+- **Backend**: Django + Gunicorn in Docker on Render Web Service
+- **Frontend**: Built React app served via nginx in Docker on Render Static Site
 - **Database**: Render PostgreSQL (currently local PostgreSQL)
-- **Media**: Cloudinary for image storage (currently local `media/` folder)
+- **Media**: Cloudflare R2 (S3-compatible object storage)
 - **Environment Variables**: Managed via `.env` locally, Render dashboard in production

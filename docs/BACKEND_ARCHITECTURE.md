@@ -32,7 +32,7 @@ src/backend/
 ├── core/                     # Core app (global functionality)
 │   ├── __init__.py
 │   ├── admin.py              # Django admin registration
-│   ├── apps.py               # App configuration
+│   ├── apps.py               # CoreConfig.ready(): shared boto3 connection for all threads
 │   ├── models.py             # SiteImage, SiteSetting, Page, PageHero, PageSection (PolymorphicModel), WideImageSection, VideoSection, TightImageSection (+ TightImageCard), ReelsSection (+ ReelItem)
 │   ├── translation.py        # modeltranslation registration
 │   ├── migrations/           # Database migrations
@@ -144,6 +144,13 @@ MIDDLEWARE = [
 | `DATABASE_PORT` | String | `5432` | PostgreSQL port |
 | `ALLOWED_HOSTS` | String | `""` (empty → `[""]`) | Comma-separated allowed domains |
 | `CORS_ALLOWED_ORIGINS` | String | `http://localhost:5173` | Comma-separated allowed frontend origins |
+| `CSRF_TRUSTED_ORIGINS` | String | `""` | Comma-separated trusted origins for POST requests |
+| `ADMIN_URL` | String | `cafe-admin/` | Admin panel path prefix |
+| `R2_ACCESS_KEY_ID` | String | — | Cloudflare R2 access key |
+| `R2_SECRET_ACCESS_KEY` | String | — | Cloudflare R2 secret key |
+| `R2_BUCKET_NAME` | String | — | R2 bucket name |
+| `R2_ENDPOINT_URL` | String | — | R2 S3-compatible endpoint URL |
+| `R2_CUSTOM_DOMAIN` | String | — | R2 public custom domain (optional, for public buckets) |
 
 ---
 
@@ -151,12 +158,13 @@ MIDDLEWARE = [
 
 ```
 Root (cafe_project/urls.py)
-├── /admin/                 → Django admin panel
-├── /tinymce/               → TinyMCE editor content CSS
+├── /cafe-admin/             → Django admin panel
+├── /tinymce/                → TinyMCE editor content CSS
 ├── /api/v1/menu/categories/  → MenuCategoryViewSet (categories with nested products)
 ├── /api/v1/pages/<slug>/     → PageDetailView (published page with hero + typed sections)
 ├── /api/v1/settings/         → SiteSettingView (flat key-value object)
 ├── /api/v1/site-images/      → SiteImageView (flat key-image object, absolute URLs)
+├── /api/v1/health/           → Health check (DB connection + JSON status)
 ├── /api/v1/schema/           → drf-spectacular OpenAPI schema (DEBUG only)
 └── /api/v1/docs/             → Swagger UI (DEBUG only)
 ```
@@ -173,15 +181,13 @@ Root (cafe_project/urls.py)
 
 ## Media Handling
 
-### Development
-- Images stored in `media/` directory
-- Served via `static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)` in `urls.py`
-- Image fields return absolute URLs via `build_absolute_uri` in serializers
+Images are stored in Cloudflare R2 via `django-storages[s3]` in both dev and production.
 
-### Production (Planned)
-- Images uploaded to Cloudinary
-- `django-cloudinary-storage` handles automatic upload
-- Database stores Cloudinary URLs
+- `STORAGES["default"]` uses `storages.backends.s3.S3Storage`
+- Images upload directly to R2 when saved in admin (no local `media/` involved)
+- `url()` returns signed R2 URLs with 7-day expiry (`querystring_expire: 604800`)
+- The R2 bucket is private; signed URLs grant temporary access
+- A shared boto3 connection is created at startup in `CoreConfig.ready()` and patched onto `S3Storage.connection` — all threads reuse the same connection, avoiding per-thread warmup cost
 
 ---
 
@@ -193,6 +199,12 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_SCHEMA_CLASS": "cafe_project.schema.CafeAutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "200/hour",
+    },
 }
 
 # In production, browsable API is disabled:
@@ -203,6 +215,10 @@ if not DEBUG:
 ```
 
 `CafeAutoSchema` extends drf-spectacular's `AutoSchema` to inject a `lang` query parameter (dropdown with ro/en/ru) into every endpoint's Swagger UI.
+
+## Caching
+
+API endpoints use Django's `LocMemCache` with `@cache_page(300)` — 5-minute cache for menu, pages, settings, and site images. No Redis required. Switch to Redis in production by setting `CACHE_BACKEND` and `CACHE_LOCATION` env vars.
 
 ---
 

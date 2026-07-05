@@ -269,7 +269,7 @@ Translation keys in `common.loading` and `error.*` (RO/EN/RU).
 ```typescript
 // api/client.ts
 const apiClient = axios.create({
-  baseURL: "http://localhost:8000/api/v1/",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 // Auto-append ?lang= from localStorage
@@ -301,7 +301,7 @@ fetchImages()           → GET /site-images/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL (unused — hardcoded in client.ts) | `http://localhost:8000` |
+| `VITE_API_URL` | Backend API base URL (Vite bakes it into the bundle at build time) | (required — no fallback) |
 
 ---
 
