@@ -85,6 +85,7 @@ DATABASES = {
         "PASSWORD": os.getenv("DATABASE_PASSWORD"),
         "HOST": os.getenv("DATABASE_HOST"),
         "PORT": os.getenv("DATABASE_PORT"),
+        'CONN_MAX_AGE': 600, 
     }
 }
 
@@ -148,6 +149,8 @@ STORAGES = {
             "region_name": "auto",
             "signature_version": "s3v4",
             "file_overwrite": False,
+            "querystring_expire": 604800,
+            "default_acl": "private",
         },
     },
     "staticfiles": {
@@ -175,6 +178,12 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_SCHEMA_CLASS": "cafe_project.schema.CafeAutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "200/hour",
+    },
 }
 if not DEBUG:
     REST_FRAMEWORK |= {"DEFAULT_RENDERER_CLASSES": [
@@ -212,4 +221,21 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
 }

@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('cafe-admin/', admin.site.urls),
     path("tinymce/", include("tinymce.urls")),
     path("api/v1/", include("menu.urls")),
     path("api/v1/", include("core.urls")),

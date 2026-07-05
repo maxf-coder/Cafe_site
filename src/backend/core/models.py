@@ -71,6 +71,10 @@ class PageSection(PolymorphicModel):
 
     class Meta:
         ordering = ["sort_order"]
+        indexes = [
+            models.Index(fields=["page", "is_published", "sort_order"]),
+        ]
+
 
     def __str__(self):
         return f"{self.__class__.__name__} - {self.page.name}"
@@ -115,6 +119,10 @@ class TightImageCard(models.Model):
 
     class Meta:
         ordering = ["sort_order"]
+        indexes = [
+            models.Index(fields=["section", "sort_order"]),
+        ]
+
 
     def __str__(self):
         return self.title
@@ -134,6 +142,9 @@ class ReelItem(models.Model):
     sort_order = models.PositiveIntegerField(default=0)
     class Meta:
         ordering = ["sort_order"]
+        indexes = [
+            models.Index(fields=["section", "sort_order"]),
+        ]
 
     def __str__(self):
         return f'Reel - {self.sort_order}'

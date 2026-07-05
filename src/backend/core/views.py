@@ -4,16 +4,18 @@ from .models import Page, SiteSetting, SiteImage
 from .serializers import PageDetailSerializer, SiteSettingSerializer, SiteImageSerializer
 from django.http import JsonResponse
 from django.db import connection
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 
 logger = logging.getLogger(__name__)
 
-
+@method_decorator(cache_page(300), name='dispatch')
 class PageDetailView(RetrieveAPIView):
     queryset = Page.objects.filter(is_published=True)
     serializer_class = PageDetailSerializer
     lookup_field = "slug"
 
-
+@method_decorator(cache_page(300), name='dispatch')
 class SiteSettingView(ListAPIView):
     queryset = SiteSetting.objects.all()
     serializer_class = SiteSettingSerializer
@@ -27,7 +29,7 @@ class SiteSettingView(ListAPIView):
         logger.info("Site settings fetched: %d keys", len(response.data))
         return response
 
-
+@method_decorator(cache_page(300), name='dispatch')
 class SiteImageView(ListAPIView):
     include_lang_parameter = False
     queryset = SiteImage.objects.all()

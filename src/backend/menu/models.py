@@ -38,6 +38,10 @@ class MenuProduct(models.Model):
     class Meta:
         ordering = ["sort_order"]
         verbose_name_plural = "Menu products"
+        indexes = [
+            models.Index(fields=["category", "is_active", "sort_order"]),
+        ]
+
 
     def __str__(self):
         return self.name
