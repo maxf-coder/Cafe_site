@@ -9,9 +9,20 @@ RUN uv run python manage.py collectstatic --noinput --clear
 
 # Stage 2: runtime
 FROM python:3.12-slim
-COPY --from=builder /app/.venv /app/.venv
-COPY --from=builder /app /app
+
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
+
+COPY --chown=appuser:appgroup --from=builder /app/.venv /app/.venv
+COPY --chown=appuser:appgroup --from=builder /app /app
 WORKDIR /app
 ENV PATH="/app/.venv/bin:$PATH"
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 EXPOSE 8000
 CMD ["gunicorn", "cafe_project.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "4", "--timeout", "120", "--access-logfile", "-"]
+
+ENV HOME=/app
+USER appuser

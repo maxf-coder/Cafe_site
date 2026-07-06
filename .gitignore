@@ -1,5 +1,4 @@
 .venv
-.env
 .log
 logs/
 __pycache__/
@@ -14,3 +13,4 @@ dist
 *.local
 src/backend/menu/management/
 src/backend/core/management/
+cafe_data.json
