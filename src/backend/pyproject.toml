@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
-[project]
 dependencies = [
     "django>=6.0.6",
     "django-admin-sortable2>=2.3.1",
@@ -16,13 +15,9 @@ dependencies = [
     "django-tinymce>=5.0.0",
     "djangorestframework>=3.17.1",
     "gunicorn>=26.0.0",
+    "drf-spectacular>=0.29.0",
     "pillow>=12.2.0",
     "psycopg2-binary>=2.9.12",
     "python-dotenv>=1.2.2",
     "whitenoise>=6.12.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "drf-spectacular>=0.29.0",
 ]

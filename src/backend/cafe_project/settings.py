@@ -38,9 +38,11 @@ INSTALLED_APPS = [
     "menu",
     "core",
     "adminsortable2",
-    "drf_spectacular",
     "django_cleanup", 
 ]
+
+if DEBUG:
+    INSTALLED_APPS += ["drf_spectacular"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -179,7 +181,6 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny",
     ],
-    "DEFAULT_SCHEMA_CLASS": "cafe_project.schema.CafeAutoSchema",
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
     ],
@@ -191,6 +192,8 @@ if not DEBUG:
     REST_FRAMEWORK |= {"DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ]}
+if DEBUG:
+    REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "cafe_project.schema.CafeAutoSchema"
 
 LOGGING = {
     "version": 1,

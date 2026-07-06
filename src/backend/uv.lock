@@ -34,12 +34,16 @@ dependencies = [
     { name = "django-storages", extra = ["s3"] },
     { name = "django-tinymce" },
     { name = "djangorestframework" },
-    { name = "drf-spectacular" },
     { name = "gunicorn" },
     { name = "pillow" },
     { name = "psycopg2-binary" },
     { name = "python-dotenv" },
     { name = "whitenoise" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "drf-spectacular" },
 ]
 
 [package.metadata]
@@ -53,13 +57,14 @@ requires-dist = [
     { name = "django-storages", extras = ["s3"], specifier = ">=1.14.6" },
     { name = "django-tinymce", specifier = ">=5.0.0" },
     { name = "djangorestframework", specifier = ">=3.17.1" },
-    { name = "drf-spectacular", specifier = ">=0.29.0" },
+    { name = "drf-spectacular", marker = "extra == 'dev'", specifier = ">=0.29.0" },
     { name = "gunicorn", specifier = ">=26.0.0" },
     { name = "pillow", specifier = ">=12.2.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.12" },
     { name = "python-dotenv", specifier = ">=1.2.2" },
     { name = "whitenoise", specifier = ">=6.12.0" },
 ]
+provides-extras = ["dev"]
 
 [[package]]
 name = "boto3"

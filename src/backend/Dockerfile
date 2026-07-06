@@ -5,6 +5,8 @@ WORKDIR /app
 COPY pyproject.toml uv.lock ./
 RUN uv sync --no-dev --frozen
 COPY . .
+ARG SECRET_KEY=dummy-build-key
+ENV SECRET_KEY=$SECRET_KEY
 RUN uv run python manage.py collectstatic --noinput --clear
 
 # Stage 2: runtime
