@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware", 
     'corsheaders.middleware.CorsMiddleware',
     "cafe_project.middleware.LanguageMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -154,7 +155,7 @@ STORAGES = {
         },
     },
     "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
 
