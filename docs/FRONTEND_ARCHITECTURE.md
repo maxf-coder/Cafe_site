@@ -2,11 +2,15 @@
 
 > ✅ **Implemented** — Vite + React 19 + TypeScript + Tailwind v4.
 > Dev server runs on `http://localhost:5173`, proxies API to `http://localhost:8000`.
+> Production build runs in Docker (nginx:1.27-alpine), proxies `/api/` → backend.
 
 ## Project Structure
 
 ```
 src/frontend/
+├── .dockerignore                # Excludes node_modules, .env from Docker build
+├── Dockerfile                   # Multi-stage: node:22-alpine build → nginx:1.27-alpine serve
+├── nginx.conf                   # Proxies /api/, /cafe-admin/, /static/ → backend:8000
 ├── index.html
 ├── package.json
 ├── vite.config.ts
@@ -18,7 +22,7 @@ src/frontend/
     ├── App.tsx                   # QueryClientProvider + I18nProvider + BrowserRouter
     ├── index.css                 # Tailwind v4 import (@import "tailwindcss")
     ├── api/                      # API client layer
-    │   ├── client.ts             # Axios instance (?lang= interceptor)
+    │   ├── client.ts             # Axios instance (?lang= interceptor, env var validation)
     │   ├── contentPages.ts       # fetchContentPage(slug)
     │   ├── images.ts             # fetchImages()
     │   ├── menuCategories.ts     # fetchMenuCategories()
@@ -268,8 +272,13 @@ Translation keys in `common.loading` and `error.*` (RO/EN/RU).
 
 ```typescript
 // api/client.ts
+const apiBaseUrl = import.meta.env.VITE_API_URL;
+if (!apiBaseUrl) {
+  throw new Error("VITE_API_URL is required. Set it in .env or pass as --build-arg in Docker.");
+}
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: apiBaseUrl,
 });
 
 // Auto-append ?lang= from localStorage
@@ -279,11 +288,11 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// api/endpoints
-fetchMenuCategories()   → GET /menu/categories/
-fetchContentPage(slug)  → GET /pages/{slug}/
-fetchSettings()         → GET /settings/
-fetchImages()           → GET /site-images/
+// api/endpoints (no leading / — baseURL includes /api/v1/)
+fetchMenuCategories()   → GET menu/categories/
+fetchContentPage(slug)  → GET pages/{slug}/
+fetchSettings()         → GET settings/
+fetchImages()           → GET site-images/
 ```
 
 ---
@@ -301,7 +310,7 @@ fetchImages()           → GET /site-images/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL (Vite bakes it into the bundle at build time) | (required — no fallback) |
+| `VITE_API_URL` | Backend API base URL (Vite bakes it into the bundle at build time) | (required — build fails if missing) |
 
 ---
 

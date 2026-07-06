@@ -22,35 +22,42 @@ A multi-language (Romanian, English, Russian) website for Fiesta Gastro Cafe. Th
 
 | Layer | Technology |
 |-------|------------|
-| **Backend** | Django 6.0.5 + Django REST Framework + drf-spectacular + django-modeltranslation + django-polymorphic + django-cleanup + adminsortable2 + django-tinymce |
+| **Backend** | Django 6.0 + DRF + Whitenoise + Gunicorn + django-modeltranslation + django-polymorphic + django-cleanup + adminsortable2 + django-tinymce |
 | **Frontend** | React 19 + Vite + TypeScript + Tailwind v4 + framer-motion + lucide-react |
 | **Database** | PostgreSQL |
 | **State Management** | TanStack Query (server state) + React Context (UI state / i18n) |
 | **Routing** | React Router v7 |
 | **i18n** | django-modeltranslation (backend) + Custom React Context (frontend) |
-| **Hosting** | Render (planned) |
+| **Hosting** | Docker Compose → Render Web Service (backend) + Render Static Site (frontend) |
 | **Media Storage** | Cloudflare R2 via django-storages[s3] |
 
 ## Project Structure
 
 ```
 Cafe_site/
-├── docs/                    # Project documentation
+├── docker-compose.yml           # 3 services: db, backend, frontend
+├── docs/                        # Project documentation
 ├── src/
-│   ├── backend/             # Django project
-│   │   ├── cafe_project/    # Settings, urls, middleware, schema
-│   │   ├── menu/            # Menu app (categories, products, translations)
-│   │   ├── core/            # Core app (pages, sections, settings, translations)
-│   │   ├── logs/            # Rotating log files (auto-created)
+│   ├── backend/                 # Django project
+│   │   ├── .dockerignore
+│   │   ├── Dockerfile           # Multi-stage, uv-based, non-root user
+│   │   ├── entrypoint.sh        # Migrations → Gunicorn
+│   │   ├── cafe_project/        # Settings, urls, middleware
+│   │   ├── menu/                # Menu app (categories, products, translations)
+│   │   ├── core/                # Core app (pages, sections, settings, translations)
+│   │   ├── logs/                # Rotating log files (auto-created)
 │   │   └── manage.py
-│   └── frontend/            # React project (Vite + TypeScript + Tailwind)
+│   └── frontend/                # React project (Vite + TypeScript + Tailwind)
+│       ├── .dockerignore
+│       ├── Dockerfile           # Multi-stage, nginx:1.27-alpine
+│       ├── nginx.conf           # Proxy /api/, /cafe-admin/, /static/ → backend
 │       ├── src/
-│       │   ├── api/         # Axios client + endpoint functions
-│       │   ├── components/  # layout, menu, content, shared components
-│       │   ├── i18n/        # Translation context + RO/EN/RU dicts
-│       │   ├── pages/       # Menu.tsx, ContentPage.tsx
-│       │   ├── types/       # TypeScript interfaces
-│       │   └── utils/       # Helpers
+│       │   ├── api/             # Axios client + endpoint functions
+│       │   ├── components/      # layout, menu, content, shared components
+│       │   ├── i18n/            # Translation context + RO/EN/RU dicts
+│       │   ├── pages/           # Menu.tsx, ContentPage.tsx
+│       │   ├── types/           # TypeScript interfaces
+│       │   └── utils/           # Helpers
 │       ├── vite.config.ts
 │       └── package.json
 └── README.md
@@ -105,10 +112,20 @@ Content is stored in three language columns per field (`name_ro`, `name_en`, `na
 
 See `docs/BACKEND_ARCHITECTURE.md` for the full language configuration.
 
-## Deployment (Planned)
+## Deployment
 
-- **Backend**: Django + Gunicorn in Docker on Render Web Service
-- **Frontend**: Built React app served via nginx in Docker on Render Static Site
-- **Database**: Render PostgreSQL (currently local PostgreSQL)
-- **Media**: Cloudflare R2 (S3-compatible object storage)
-- **Environment Variables**: Managed via `.env` locally, Render dashboard in production
+The project runs in Docker Compose with 3 services (`db`, `backend`, `frontend`). Deploy to Render:
+
+- **Backend**: Django + Gunicorn in Docker via Render Web Service
+- **Frontend**: Built React app served via nginx in Docker via Render Static Site
+- **Database**: Render PostgreSQL (or Docker Compose `db` service in development)
+- **Media**: Cloudflare R2 (S3-compatible object storage, signed URLs)
+- **Environment Variables**: `.env` files locally, Render dashboard in production
+
+### Quick Start
+```bash
+docker compose build
+docker compose up -d
+```
+
+See `docs/BACKEND_ARCHITECTURE.md` for caching, rate limiting, and production settings.

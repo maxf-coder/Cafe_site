@@ -4,7 +4,8 @@
 
 The backend exposes read-only API endpoints. All responses are JSON. No authentication required.
 
-**Base URL (development):** `http://localhost:8000`
+**Base URL (manual dev):** `http://localhost:8000`
+**Base URL (Docker Compose):** `http://localhost` (nginx proxies `/api/` → backend)
 **Base URL (production):** Set `VITE_API_URL` at frontend build time (e.g., `https://api.yourdomain.com/api/v1/`)
 
 ---

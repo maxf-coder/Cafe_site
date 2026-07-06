@@ -1,6 +1,7 @@
 # Admin Guide
 
-> **URL**: `http://localhost:8000/cafe-admin/`
+> **URL (manual dev)**: `http://localhost:8000/cafe-admin/`
+> **URL (Docker Compose)**: `http://localhost/cafe-admin/`
 > **Write path**: Django admin is the **only** way to create/edit content. The API is read-only.
 
 ---
@@ -159,14 +160,18 @@ Added inline within a Category:
 
 ### Import Command
 
-Instead of manually creating 50+ products, use the import script:
+Instead of manually creating 50+ products, use the JSON fixture:
 
 ```bash
-cd src/backend
-uv run python manage.py import_menu_data
+# Local dev
+uv run python manage.py loaddata cafe_data.json
+
+# Docker Compose
+docker compose cp cafe_data.json backend:/app/
+docker compose exec backend python manage.py loaddata cafe_data.json
 ```
 
-This creates 15 categories and 49 products with Romanian names/slugs and a shared placeholder image.
+This creates 15 categories and 49 products with Romanian names, slugs, and signed R2 image URLs.
 
 ---
 
