@@ -5,6 +5,7 @@ import MenuSection from '@/components/menu/MenuSection';
 import ProductModal from '@/components/menu/ProductModal';
 import Loader from '@/components/shared/Loader';
 import ErrorState from '@/components/shared/ErrorState';
+import SEOHelmet from '@/components/seo/SEOHelmet';
 import { useI18n } from '@/i18n/context';
 import { useQuery } from '@tanstack/react-query';
 import { fetchContentPage } from '@/api/contentPages';
@@ -38,25 +39,30 @@ export default function Menu() {
 
   return (
     <>
-    <title>Fiesta Gastro Cafe</title>
-    <div>
-      {(page?.hero || false) && <Hero heroData={page.hero}/>}
-      <MenuCategoryBar menuCategories={menuCategories ?? []}/>
+      <SEOHelmet
+        title="Meniu"
+        description="Vezi meniul nostru complet cu preparate delicioase și băuturi răcoritoare."
+        type="restaurant.menu"
+      />
+      
+      <div>
+        {(page?.hero || false) && <Hero heroData={page.hero}/>}
+        <MenuCategoryBar menuCategories={menuCategories ?? []}/>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
-        {(menuCategories ?? []).map((categoryData) => (
-          <MenuSection
-            key={categoryData.slug}
-            categoryData={categoryData}
-            onProductClick={setSelectedProduct }
-          />
-        ))}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+          {(menuCategories ?? []).map((categoryData) => (
+            <MenuSection
+              key={categoryData.slug}
+              categoryData={categoryData}
+              onProductClick={setSelectedProduct }
+            />
+          ))}
+        </div>
+
+        {selectedProduct && (
+          <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+        )}
       </div>
-
-      {selectedProduct && (
-        <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-      )}
-    </div>
     </>
   );
 }

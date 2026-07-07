@@ -1,12 +1,16 @@
 import { motion } from 'framer-motion';
 import type { PageHero } from '@/types/api';
+import ImageWithSkeleton from './ImageWithSkeleton';
 
 export default function Hero( { heroData }: {heroData: PageHero}) {
   return (
     <section className="relative h-[30vh] md:h-[40vh] lg:h-[50vh] xl:h-[60vh] 2xl:h-[70vh] overflow-hidden">
-      <img
+      <ImageWithSkeleton
         src={heroData.img_src}
         alt={heroData.alt_text}
+        fetchPriority="high"
+        width="1920"
+        height="1080"
         className="absolute inset-0 w-full h-full object-cover"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/30 to-transparent" />

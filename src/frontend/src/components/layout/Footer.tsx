@@ -4,6 +4,7 @@ import { FaInstagram, FaFacebook } from 'react-icons/fa'
 import { useQuery } from '@tanstack/react-query';
 import { fetchSettings } from '@/api/settings';
 import { fetchImages } from '@/api/images';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 export default function Footer() {
   const { t, lang } = useI18n();
@@ -26,9 +27,11 @@ export default function Footer() {
           {/* Logo & Mission */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <img
+              <ImageWithSkeleton
                 src={images?.logo?.src || "/images/placeholderLogo.png"}
                 alt={images?.logo?.alt || ""}
+                width="48"
+                height="48"
                 loading="lazy"
                 className="h-12 w-12 rounded-squircle object-cover"
               />
@@ -43,7 +46,7 @@ export default function Footer() {
 
           {/* Contacts */}
           <div className="space-y-4">
-            <h3 className="font-heading font-semibold text-lg text-white">{t('footer.contacts')}</h3>
+            <h2 className="font-heading font-semibold text-lg text-white">{t('footer.contacts')}</h2>
             <div className="space-y-3">
               <a href={`tel:${settings?.phone || ""}`} className="flex items-center gap-3 text-sm text-secondary-foreground/80 hover:text-white transition-colors duration-300">
                 <div className="w-9 h-9 rounded-squircle bg-white/10 flex items-center justify-center hover:bg-primary transition-colors duration-300">

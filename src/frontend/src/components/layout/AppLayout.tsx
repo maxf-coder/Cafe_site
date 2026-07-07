@@ -3,10 +3,14 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import { useQuery } from '@tanstack/react-query';
 import { fetchImages } from '@/api/images';
+import { Helmet } from 'react-helmet-async'
+import { useI18n } from "@/i18n/context"
 import { useEffect } from 'react';
+import RestaurantSchema from '@/components/seo/RestaurantSchema'
 
 
 export default function AppLayout() {
+  const { lang } = useI18n()
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -21,7 +25,11 @@ export default function AppLayout() {
 
   return (
     <>
-      { (images?.logo?.src && <link rel="icon" href={images.logo.src} />) || (<link rel="icon" href="/images/placeholderLogo.png" />) }
+      <RestaurantSchema />
+      <Helmet>
+        <html lang={lang} />
+        <link rel="icon" href={images?.logo?.src || "/images/placeholderLogo.png"} />
+      </Helmet>
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
         <main className="flex-1">

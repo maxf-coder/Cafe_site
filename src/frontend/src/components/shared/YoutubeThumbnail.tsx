@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos'
 import type { ThumbnailSize } from '@/utils/YoutubeVideos'
+import ImageWithSkeleton from './ImageWithSkeleton'
 
 interface Props {
   videoUrl: string
@@ -28,9 +29,11 @@ export default function YoutubeThumbnail({ videoUrl, sizes = ['maxresdefault', '
   const src = getYoutubeTumbnailUrl(videoUrl, sizes[Math.min(attempt, sizes.length - 1)])
 
   return (
-    <img
+    <ImageWithSkeleton
       src={src}
       alt={alt || ''}
+      width="480"
+      height="360"
       loading="lazy"
       className={className}
       onLoad={handleLoad}

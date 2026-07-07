@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import type { TightImageContent, TightImageCard } from '@/types/api';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 function TightCard({ card }: { card: TightImageCard }) {
   const { t } = useI18n();
@@ -11,9 +12,11 @@ function TightCard({ card }: { card: TightImageCard }) {
   return (
     <div className="bg-accent rounded-squircle overflow-hidden group">
       <div className="aspect-[4/3] overflow-hidden">
-        <img
+        <ImageWithSkeleton
           src={card.img_src}
           alt={card.alt_text}
+          width="600"
+          height="450"
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import type {MenuProduct} from "@/types/api"
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 type ProductCardProps = {
   product: MenuProduct
@@ -21,9 +22,11 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
     >
       {/* Image */}
       <div className="aspect-square overflow-hidden rounded-t-squircle">
-        <img
+        <ImageWithSkeleton
           src={product.img_src}
           alt={product.alt_text}
+          width="400"
+          height="300"
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -32,9 +35,9 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       {/* Content */}
       <div className="p-4 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h2 className="font-heading font-semibold text-sm md:text-base text-foreground leading-tight">
+          <h3 className="font-heading font-semibold text-sm md:text-base text-foreground leading-tight">
             {product.name}
-          </h2>
+          </h3>
         </div>
 
         <p className="font-body text-xs text-muted-foreground line-clamp-2 leading-relaxed hidden md:block">

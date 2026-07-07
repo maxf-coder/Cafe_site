@@ -2,6 +2,7 @@ import { fetchContentPage } from "@/api/contentPages";
 import Hero from "@/components/shared/Hero";
 import Loader from "@/components/shared/Loader";
 import ErrorState from "@/components/shared/ErrorState";
+import SEOHelmet from '@/components/seo/SEOHelmet'
 import { useI18n } from "@/i18n/context";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
@@ -25,7 +26,14 @@ export default function ContentPage() {
 
     return (
         <>
-            {page?.name && <title>{page.name} | Fiesta Gastro Cafe</title>}
+            {page?.name && (
+                <SEOHelmet
+                    title={page.name}
+                    description={page.hero?.secondary_text || ""}
+                    image={page.hero?.img_src || ""}
+                />
+            )}
+            
             <div>
                 {(page?.hero || false) && <Hero heroData={page.hero}/>}
                 <SectionRenderer sections={page?.sections || []} />

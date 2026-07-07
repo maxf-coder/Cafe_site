@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import type { WideImageContent } from '@/types/api';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 export default function WideImageSection({ content }: { content: WideImageContent }) {
   const { t } = useI18n();
@@ -18,16 +19,18 @@ export default function WideImageSection({ content }: { content: WideImageConten
     >
       <div className="bg-accent rounded-squircle overflow-hidden group">
         <div className="aspect-[16/7] overflow-hidden">
-          <img
+          <ImageWithSkeleton
             src={content.img_src}
             alt={content.alt_text}
+            width="1200"
+            height="525"
             loading="lazy"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
         <div className="p-5 md:p-6 space-y-3">
           {content.title && (
-            <h3 className="font-heading font-bold text-lg md:text-xl text-foreground">{content.title}</h3>
+            <h2 className="font-heading font-bold text-lg md:text-xl text-foreground">{content.title}</h2>
           )}
           <AnimatePresence mode="wait">
             <motion.p

@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSettings } from '@/api/settings';
 import { fetchImages } from '@/api/images';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 const languages = ['RO', 'EN', 'RU'];
 
@@ -41,9 +42,11 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img
+            <ImageWithSkeleton
               src={images?.logo?.src || "/images/placeholderLogo.png"}
               alt={images?.logo?.alt || ""}
+              width="48"
+              height="48"
               className="h-10 lg:h-12 w-10 lg:w-12 rounded-squircle object-cover"
             />
             <span className="font-heading font-semibold text-lg lg:text-xl text-secondary hidden sm:block">

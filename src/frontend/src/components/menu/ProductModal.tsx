@@ -2,6 +2,7 @@ import { useI18n } from '@/i18n/context';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MenuProduct } from '@/types/api';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 export default function ProductModal({ product, onClose }: { product: MenuProduct, onClose: () => void}) {
   const { t } = useI18n();
@@ -41,9 +42,11 @@ export default function ProductModal({ product, onClose }: { product: MenuProduc
 
           {/* Image */}
           <div className="aspect-[4/3] w-full overflow-hidden rounded-t-[2rem] sm:rounded-t-squircle">
-            <img
+            <ImageWithSkeleton
               src={product.img_src}
               alt={product.alt_text}
+              width="600"
+              height="450"
               className="w-full h-full object-cover"
             />
           </div>
@@ -51,9 +54,9 @@ export default function ProductModal({ product, onClose }: { product: MenuProduc
           {/* Content */}
           <div className="p-6 space-y-4">
             <div className="flex items-start justify-between gap-4">
-              <h2 className="font-heading font-bold text-xl md:text-2xl text-foreground">
+              <h3 className="font-heading font-bold text-xl md:text-2xl text-foreground">
                 {product.name}
-              </h2>
+              </h3>
               <span className="font-heading font-bold text-xl text-secondary shrink-0">
                 {product.price} MDL
               </span>
