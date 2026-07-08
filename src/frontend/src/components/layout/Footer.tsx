@@ -125,7 +125,11 @@ export default function Footer() {
                   </a>
                 )}
                 {settings.developer_email && (
-                  <a href={`mailto:${settings.developer_email}`} aria-label="Email"
+                  <a
+                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${settings.developer_email}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Email"
                     className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
                     <FaEnvelope className="w-4 h-4" />
                   </a>
