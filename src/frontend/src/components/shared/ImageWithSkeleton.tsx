@@ -15,17 +15,21 @@ export default function ImageWithSkeleton({ src, alt, className, ...props }: Pro
   const [loaded, setLoaded] = useState(false)
 
   return (
-    <img
-      {...props}
-      src={src}
-      alt={alt || ""}
-      className={`${className || ''} transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+    <div
+      className={className || ''}
       style={{
         background: 'linear-gradient(135deg, #d1d5db 0%, #d1d5db 42%, #f3f4f6 46%, #f3f4f6 54%, #d1d5db 58%, #d1d5db 100%)',
         backgroundSize: '300% 300%',
         animation: loaded ? 'none' : 'shimmer 1.5s ease-in-out infinite',
       }}
-      onLoad={(e) => { setLoaded(true); props.onLoad?.(e) }}
-    />
+    >
+      <img
+        src={src}
+        alt={alt || ""}
+        {...props}
+        className={`${className || ''} transition-opacity duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+        onLoad={(e) => { setLoaded(true); props.onLoad?.(e) }}
+      />
+    </div>
   )
 }
