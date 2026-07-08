@@ -2,7 +2,8 @@
 
 > ✅ **Implemented** — Vite + React 19 + TypeScript + Tailwind v4.
 > Dev server runs on `http://localhost:5173`, proxies API to `http://localhost:8000`.
-> Production build runs in Docker (nginx:1.27-alpine), proxies `/api/` → backend.
+> Production build runs in Docker (nginx:1.27-alpine) or Render Static Site.
+> On Docker: nginx proxies `/api/` → backend. On Render: frontend calls backend directly via CORS.
 
 ## Project Structure
 
@@ -18,8 +19,8 @@ src/frontend/
 ├── tsconfig.app.json
 ├── tsconfig.node.json
 └── src/
-    ├── main.tsx                  # Entry point (StrictMode → App)
-    ├── App.tsx                   # QueryClientProvider + I18nProvider + BrowserRouter
+    ├── main.tsx                  # Entry point (HelmetProvider → StrictMode → App)
+    ├── App.tsx                   # QueryClientProvider + BrowserRouter + I18nProvider + Routes
     ├── index.css                 # Tailwind v4 import (@import "tailwindcss")
     ├── api/                      # API client layer
     │   ├── client.ts             # Axios instance (?lang= interceptor, env var validation)
@@ -35,19 +36,23 @@ src/frontend/
     │   │   ├── VideoSection.tsx
     │   │   └── ReelsCarousel.tsx
     │   ├── layout/
-    │   │   ├── AppLayout.tsx     # Shell: Navbar + <Outlet/> + Footer
+    │   │   ├── AppLayout.tsx     # Shell: Helmet + RestaurantSchema + Navbar + <Outlet/> + Footer
     │   │   ├── Navbar.tsx        # Logo, links, phone CTA, language switcher
-    │   │   └── Footer.tsx        # Mission, contact, schedule, socials, copyright
+    │   │   └── Footer.tsx        # Mission, contact, schedule, socials, credits, copyright
     │   ├── menu/
-    │   │   ├── Hero.tsx          # Home page hero from content page API
     │   │   ├── MenuCategoryBar.tsx  # Sticky scrollspy category tabs
     │   │   ├── MenuSection.tsx      # Product grid per category
     │   │   ├── ProductCard.tsx      # Single product card
-    │   │   └── ProductModal.tsx     # Full product detail (HTML description)
+    │   │   ├── ProductModal.tsx     # Full product detail (HTML description)
+    │   │   └── Hero.tsx          # REMOVED — Hero moved to shared/
+    │   ├── seo/                  # Search engine optimization
+    │   │   ├── SEOHelmet.tsx       # Per-page title, meta, OG, Twitter, canonical, hreflang
+    │   │   └── RestaurantSchema.tsx # JSON-LD LocalBusiness/Restaurant structured data
     │   └── shared/
     │       ├── Hero.tsx              # Page hero renderer (used by Menu + ContentPage)
     │       ├── Loader.tsx            # Loading spinner (bouncing coffee cup)
     │       ├── ErrorState.tsx        # Error display with optional retry button
+    │       ├── ImageWithSkeleton.tsx # Lazy image with shimmer skeleton placeholder
     │       └── YoutubeThumbnail.tsx  # YouTube thumbnail with auto-fallback chain
     ├── i18n/
     │   ├── context.tsx           # I18nProvider, useI18n, useTranslation
@@ -67,14 +72,15 @@ src/frontend/
 
 | Technology | Purpose |
 |------------|---------|
-| React 19 | UI library (native `<title>`, `<link>` hoisting) |
+| React 19 | UI library |
 | TypeScript | Type safety |
 | Vite | Build tool and dev server |
 | Tailwind v4 | Utility-first CSS (no config file needed) |
 | React Router v7 | Client-side routing |
 | TanStack Query v5 | Server state management |
 | Axios | HTTP client |
-| framer-motion | Animations (product modal, hover effects) |
+| react-helmet-async | Dynamic `<head>` management (title, meta, OG, canonical, hreflang) |
+| framer-motion | Animations (product modal, hover effects, scroll animations) |
 | lucide-react | Icons (Phone, Mail, MapPin, Globe, etc.) |
 
 ---
@@ -88,6 +94,9 @@ src/frontend/
     <Route path="/content/:slug" element={<ContentPage />} />  {/* /content/despre-noi */}
   </Route>
 </Routes>
+
+> **Note**: On Render Static Site (no nginx proxy), `VITE_API_URL` points to the backend URL directly.
+> On Docker + nginx, it points to `/api/v1/` (relative, proxied by nginx).
 ```
 
 Only 2 routes:
@@ -141,49 +150,123 @@ Custom React context-based i18n with static dictionaries:
 
 **Persistence**: Language written to `localStorage("lang")` via `setLangAndPersist`.
 
+**API sync**: `setLangAndPersist` also calls `setApiLang(lang)` from `api/client.ts` — a module-level variable that the Axios interceptor reads (faster than reading `localStorage` on every request).
+
 **Sync flow**: 
-1. App mounts → `useState` reads `localStorage` 
-2. Axios interceptor reads `localStorage` → appends `?lang=` to every request
-3. User toggles → `setLangAndPersist` updates state + `localStorage`
+1. App mounts → `useState` reads `localStorage`
+2. Axios interceptor reads module-level `_lang` (or `localStorage` fallback) → appends `?lang=` to every request
+3. User toggles → `setLangAndPersist` updates state + `localStorage` + api client `_lang`
 
 ---
 
 ## Component Hierarchy
 
 ```
-App
-└── QueryClientProvider
-    └── I18nProvider
-        └── BrowserRouter
-            └── AppLayout
-                ├── <link rel="icon"> (React 19 native, from images?.logo?.src)
-                ├── Navbar
-                │   ├── Logo (images?.logo?.src)
-                │   ├── NavLinks (hardcoded routes)
-                │   ├── PhoneCTA (settings?.phone)
-                │   └── LanguageSwitcher (RO/EN/RU)
-                ├── <Outlet /> — one of:
-                │   ├── Menu (/) 
-                │   │   ├── Hero (from page slug "meniu")
-                │   │   ├── MenuCategoryBar (sticky scrollspy)
-                │   │   ├── MenuSection × N (one per category)
-                │   │   │   └── ProductCard × N
-                │   │   └── ProductModal (overlay, HTML description)
-                │   └── ContentPage (/content/:slug)
-                │       ├── Hero (from page API)
-                │       └── SectionRenderer × N
-                │           ├── WideImageSection
-                │           ├── TightImageGrid
-                │           ├── VideoSection
-                │           └── ReelsCarousel
-                └── Footer
-                    ├── Logo
-                    ├── Mission text
-                    ├── Contact (phone, email, address)
-                    ├── Schedule (working_days, weekend_days)
-                    ├── Social links (instagram, facebook)
-                    └── Copyright
+main.tsx
+└── HelmetProvider
+    └── App
+        └── QueryClientProvider
+            └── I18nProvider
+                └── BrowserRouter
+                    └── AppLayout
+                        ├── RestaurantSchema (JSON-LD)
+                        ├── Helmet (html lang, favicon from images?.logo?.src)
+                        ├── Skip-to-content link
+                        ├── Navbar
+                        │   ├── Logo (ImageWithSkeleton with images?.logo?.src)
+                        │   ├── NavLinks (hardcoded routes)
+                        │   ├── PhoneCTA (settings?.phone)
+                        │   └── LanguageSwitcher (RO/EN/RU, with aria-pressed)
+                        ├── <main id="main-content"> → <Outlet /> — one of:
+                        │   ├── Menu (/)
+                        │   │   ├── SEOHelmet (title, meta, OG, canonical)
+                        │   │   ├── Hero (ImageWithSkeleton, from page slug "meniu")
+                        │   │   ├── MenuCategoryBar (sticky scrollspy)
+                        │   │   ├── MenuSection × N (one per category)
+                        │   │   │   └── ProductCard × N (ImageWithSkeleton)
+                        │   │   └── ProductModal (ImageWithSkeleton, overlay, HTML description)
+                        │   └── ContentPage (/content/:slug)
+                        │       ├── SEOHelmet (title, meta, OG, canonical, hreflang)
+                        │       ├── Hero (ImageWithSkeleton, from page API)
+                        │       └── SectionRenderer × N
+                        │           ├── WideImageSection (ImageWithSkeleton)
+                        │           ├── TightImageGrid (ImageWithSkeleton)
+                        │           ├── VideoSection (YoutubeThumbnail → ImageWithSkeleton)
+                        │           └── ReelsCarousel (YoutubeThumbnail → ImageWithSkeleton)
+                        └── Footer
+                            ├── Logo (ImageWithSkeleton)
+                            ├── Mission text
+                            ├── Contact (phone, email, address)
+                            ├── Schedule (working_days, weekend_days)
+                            ├── Social links (instagram, facebook)
+                            ├── Credits section (developer_name, github, linkedin, email, disclaimer)
+                            └── Copyright
 ```
+
+---
+
+---
+
+## SEO Architecture
+
+### Components
+
+| Component | Location | Purpose |
+|-----------|----------|---------|
+| `SEOHelmet` | `components/seo/SEOHelmet.tsx` | Accepts `{title, description?, image?, url?, type?}`. Renders `<title>`, `<meta description>`, OG/Twitter tags, `<link rel="canonical"` in `<head>` via Helmet. Falls back to `VITE_SITE_URL` or `window.location.origin` for canonical URL. |
+| `RestaurantSchema` | `components/seo/RestaurantSchema.tsx` | Fetches settings from API, renders `<script type="application/ld+json">` with `@type: Restaurant` schema (name, image, telephone, address, servesCuisine, menu, sameAs, openingHours). Rendered once in `AppLayout`. |
+
+### Per-Page Usage
+
+| Page | Component | Title | Description |
+|------|-----------|-------|-------------|
+| Menu (`/`) | `SEOHelmet` in `Menu.tsx` | "Meniu \| Fiesta Gastro Cafe" | Static RO text |
+| ContentPage (`/content/:slug`) | `SEOHelmet` in `ContentPage.tsx` | `{page.name} \| Fiesta Gastro Cafe` | From page API `name` field |
+
+### Additional Head Elements
+
+- **`AppLayout.tsx`** — `<Helmet htmlAttributes={{ lang }}>` sets `<html lang="...">` dynamically on language switch
+- **`AppLayout.tsx`** — `<Helmet link rel="icon">` renders favicon from `images?.logo?.src` (or fallback)
+- **`public/robots.txt`** — Generated by `scripts/generate-seo.mjs` at build time from `VITE_SITE_URL`
+- **`public/sitemap.xml`** — Same script, lists all 4 pages with weekly/monthly change frequency
+- **Hreflang**: `SEOHelmet` renders `<link rel="alternate" hreflang="ro/en/ru">` for each language (future: language-in-URL routing required for full effectiveness)
+
+---
+
+## Image Loading Pattern
+
+`ImageWithSkeleton` is used for all images across the site. It renders an `<img>` with:
+
+- **CSS shimmer background**: `linear-gradient(135deg, ...)` — diagonal gray with a light reflection band
+- **Animation**: `@keyframes shimmer` slides the gradient from bottom-right to top-left
+- **Transition**: `opacity-0 → opacity-100` on `onload` (300ms fade)
+- **No wrapper div**: The shimmer is the `<img>`'s own `background` — layout is unaffected, works with any parent sizing
+- **width/height attributes**: Set on every image to prevent Cumulative Layout Shift (CLS)
+
+```tsx
+<ImageWithSkeleton
+  src={src}
+  alt={alt}
+  width="400"
+  height="300"
+  loading="lazy"
+  fetchPriority="high"
+  className="w-full h-full object-cover"
+/>
+```
+
+Images that use `ImageWithSkeleton`:
+
+| File | Dimensions | Notes |
+|------|-----------|-------|
+| `Hero.tsx` | 1920×1080 | `fetchPriority="high"`, no lazy |
+| `Navbar.tsx` | 48×48 | Logo, square |
+| `Footer.tsx` | 48×48 | Logo, square |
+| `ProductCard.tsx` | 400×300 | Product thumbnail |
+| `ProductModal.tsx` | 600×450 | Product detail |
+| `WideImageSection.tsx` | 1200×525 | Content section image |
+| `TightImageGrid.tsx` | 600×450 | Card image |
+| `YoutubeThumbnail.tsx` | 480×360 | YouTube video thumbnail |
 
 ---
 
@@ -236,7 +319,7 @@ type ThumbnailSize = 'maxresdefault' | 'sddefault' | 'hqdefault' | 'mqdefault' |
 | Component | Chain | Behavior |
 |-----------|-------|----------|
 | `VideoSection` | `maxresdefault` → `sddefault` → `hqdefault` | Tries HD first, falls back to SD (640×480), then guaranteed HQ (480×360) |
-| `ReelsCarousel` | `hqdefault` (single) | 480×360 always exists, 2.7× oversampled at 180px card width — sharp enough |
+| `ReelsCarousel` | `sddefault` → `hqdefault` | 640×480 for most reels, falls back to guaranteed 480×360 |
 
 ### Size Reference
 
@@ -263,6 +346,7 @@ if (isError) return <ErrorState message={t('error.page')} onRetry={() => refetch
 
 - **Loader** — full-height centered column with a bouncing coffee cup icon (framer-motion) + loading text
 - **ErrorState** — full-height centered column with `AlertCircle` icon, message, and optional "Try again" button that calls `refetch()`
+- **ImageWithSkeleton** — per-image shimmer skeleton while each image loads independently (see [Image Loading Pattern](#image-loading-pattern))
 
 Translation keys in `common.loading` and `error.*` (RO/EN/RU).
 
@@ -281,9 +365,13 @@ const apiClient = axios.create({
   baseURL: apiBaseUrl,
 });
 
-// Auto-append ?lang= from localStorage
+// Module-level lang — faster than reading localStorage on every request
+let _lang = "ro";
+export function setApiLang(lang: string) { _lang = lang; }
+
+// Auto-append ?lang= from module variable (fallback to localStorage)
 apiClient.interceptors.request.use((config) => {
-  const lang = localStorage.getItem("lang") || "ro";
+  const lang = _lang || localStorage.getItem("lang") || "ro";
   config.params = { ...config.params, lang };
   return config;
 });
@@ -311,6 +399,7 @@ fetchImages()           → GET site-images/
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `VITE_API_URL` | Backend API base URL (Vite bakes it into the bundle at build time) | (required — build fails if missing) |
+| `VITE_SITE_URL` | Canonical site URL for SEO (og:url, canonical, hreflang, sitemap) | Falls back to `window.location.origin` |
 
 ---
 
@@ -318,9 +407,10 @@ fetchImages()           → GET site-images/
 
 | Decision | Rationale |
 |----------|-----------|
-| React 19 native `<title>` hoisting | No `react-helmet` dependency needed |
-| Single `api/client.ts` with interceptor | Consistent language param on every request |
+| `react-helmet-async` for head management | Properly renders `<title>`, `<meta>`, OG, Twitter, canonical, hreflang tags in `<head>`. React 19's native `<title>` renders in `<body>`, invisible to crawlers. Helmet manages deduplication automatically. |
+| Single `api/client.ts` with module-level `_lang` + interceptor | Faster than reading localStorage on every request. `setApiLang()` called on language switch keeps the Axios interceptor in sync. |
 | `useI18n()` throws if used outside provider | Catches bugs during development |
-| `dangerouslySetInnerHTML` for product descriptions | API returns raw HTML from TinyMCE |
+| `dangerouslySetInnerHTML` for product descriptions | API returns raw HTML from TinyMCE. Sanitization pending. |
 | Hero content fetched from API (not static) | Content editors can change hero text via admin |
-| YouTube thumbnail fallback via `naturalWidth > 120` | YouTube returns a 120×90 gray JPEG (not a network error) for missing `maxresdefault` — `onerror` never fires. `onload` + dimension check reliably detects the placeholder and falls back to `sddefault` or `hqdefault` |
+| `ImageWithSkeleton` for lazy images | CSS-only shimmer gradient background on `<img>` (no wrapper div). Diagonal animation from `@keyframes shimmer`. Zero Cumulative Layout Shift (CLS) via aspect ratio awareness. |
+| YouTube thumbnail fallback via `naturalWidth > 120` | YouTube returns a 120×90 gray JPEG (not a network error) for missing `maxresdefault` — `onerror` never fires. `onload` + dimension check reliably detects the placeholder and falls back to next size in chain. |

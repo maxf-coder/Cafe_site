@@ -97,31 +97,40 @@ export default function Footer() {
 
         {/* Credits */}
         {settings?.disclaimer && (
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <p className="text-secondary-foreground/50 text-xs font-body text-center mb-3">
-              {settings.disclaimer}
-            </p>
-            {settings.developer_name && (
-              <p className="text-secondary-foreground/50 text-xs font-body text-center">
-                {t('footer.builtBy')} <span className="text-primary">{settings.developer_name}</span>
+          <div className="mt-12 pt-8 border-t border-white/10">
+            <div className="bg-white/5 rounded-squircle p-6 md:p-8 max-w-2xl mx-auto text-center space-y-4">
+              <p className="text-secondary-foreground/60 text-xs font-body leading-relaxed italic">
+                "{settings.disclaimer}"
               </p>
-            )}
-            <div className="flex justify-center gap-4 mt-3">
-              {settings.developer_github && (
-                <a href={settings.developer_github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-secondary-foreground/50 hover:text-primary transition-colors">
-                  <FaGithub className="w-5 h-5" />
-                </a>
+
+              {settings.developer_name && (
+                <div className="flex items-center justify-center gap-2 text-xs text-secondary-foreground/50 font-body">
+                  <span className="w-8 h-px bg-white/10" />
+                  {t('footer.builtBy')} <span className="text-primary font-semibold">{settings.developer_name}</span>
+                  <span className="w-8 h-px bg-white/10" />
+                </div>
               )}
-              {settings.developer_linkedin && (
-                <a href={settings.developer_linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-secondary-foreground/50 hover:text-primary transition-colors">
-                  <FaLinkedin className="w-5 h-5" />
-                </a>
-              )}
-              {settings.developer_email && (
-                <a href={`mailto:${settings.developer_email}`} aria-label="Email" className="text-secondary-foreground/50 hover:text-primary transition-colors">
-                  <FaEnvelope className="w-5 h-5" />
-                </a>
-              )}
+
+              <div className="flex justify-center gap-3">
+                {settings.developer_github && (
+                  <a href={settings.developer_github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
+                    <FaGithub className="w-4 h-4" />
+                  </a>
+                )}
+                {settings.developer_linkedin && (
+                  <a href={settings.developer_linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
+                    <FaLinkedin className="w-4 h-4" />
+                  </a>
+                )}
+                {settings.developer_email && (
+                  <a href={`mailto:${settings.developer_email}`} aria-label="Email"
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
+                    <FaEnvelope className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         )}

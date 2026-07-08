@@ -176,6 +176,11 @@ Returns all site settings as a flat JSON object. Keys are defined in the databas
 | `facebook_link` | Facebook page URL |
 | `instagram_link` | Instagram profile URL |
 | `footer_copyright` | Copyright notice in footer |
+| `developer_name` | Developer name in credits section |
+| `developer_github` | Developer GitHub URL |
+| `developer_linkedin` | Developer LinkedIn URL |
+| `developer_email` | Developer email address |
+| `disclaimer` | Demo site disclaimer text |
 
 **Example Response:**
 ```json

@@ -39,12 +39,18 @@ Create one `SiteSetting` record per row, entering the exact `key` as shown:
 | `instagram_link` | Footer Instagram icon | `https://instagram.com/fiestagastro` |
 | `facebook_link` | Footer Facebook icon | `https://facebook.com/fiestagastro` |
 | `footer_copyright` | Footer bottom bar | `© 2026 Fiesta Gastro Cafe. All rights reserved.` |
+| `developer_name` | Footer credits section | `Max` |
+| `developer_github` | Footer GitHub icon link | `https://github.com/yourusername` |
+| `developer_linkedin` | Footer LinkedIn icon link | `https://linkedin.com/in/yourusername` |
+| `developer_email` | Footer email icon link | `your.email@gmail.com` |
+| `disclaimer` | Footer disclaimer text | `Acest site este un model demonstrativ și nu reprezintă un restaurant real.` |
 
 ### Language-Specific Values
 
 Each setting has **3 language tabs** (`ro`, `en`, `ru`) because `value` is translatable. For example:
 - `phone`, `instagram_link`, `facebook_link` → same in all 3 tabs
 - `mission`, `address`, `working_days`, `weekend_days`, `footer_copyright` → translate per tab
+- `developer_name`, `developer_github`, `developer_linkedin`, `developer_email`, `disclaimer` → same in all 3 tabs (developer info is language-agnostic)
 
 ### Notes
 
