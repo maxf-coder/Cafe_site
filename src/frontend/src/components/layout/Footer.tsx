@@ -1,6 +1,6 @@
 import { useI18n } from '@/i18n/context';
 import { Phone, Mail, MapPin, Clock } from 'lucide-react';
-import { FaInstagram, FaFacebook } from 'react-icons/fa'
+import { FaInstagram, FaFacebook, FaGithub, FaLinkedin, FaEnvelope } from 'react-icons/fa'
 import { useQuery } from '@tanstack/react-query';
 import { fetchSettings } from '@/api/settings';
 import { fetchImages } from '@/api/images';
@@ -94,6 +94,37 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        {/* Credits */}
+        {settings?.disclaimer && (
+          <div className="mt-8 pt-6 border-t border-white/10">
+            <p className="text-secondary-foreground/50 text-xs font-body text-center mb-3">
+              {settings.disclaimer}
+            </p>
+            {settings.developer_name && (
+              <p className="text-secondary-foreground/50 text-xs font-body text-center">
+                {t('footer.builtBy')} <span className="text-primary">{settings.developer_name}</span>
+              </p>
+            )}
+            <div className="flex justify-center gap-4 mt-3">
+              {settings.developer_github && (
+                <a href={settings.developer_github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-secondary-foreground/50 hover:text-primary transition-colors">
+                  <FaGithub className="w-5 h-5" />
+                </a>
+              )}
+              {settings.developer_linkedin && (
+                <a href={settings.developer_linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="text-secondary-foreground/50 hover:text-primary transition-colors">
+                  <FaLinkedin className="w-5 h-5" />
+                </a>
+              )}
+              {settings.developer_email && (
+                <a href={`mailto:${settings.developer_email}`} aria-label="Email" className="text-secondary-foreground/50 hover:text-primary transition-colors">
+                  <FaEnvelope className="w-5 h-5" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="mt-12 pt-6 border-t border-white/10 text-center">
           <p className="text-secondary-foreground/50 text-xs font-body">{settings?.footer_copyright || ""}</p>

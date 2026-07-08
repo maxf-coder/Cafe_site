@@ -21,8 +21,10 @@ export default function YoutubeThumbnail({ videoUrl, sizes = ['maxresdefault', '
 
   const handleLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
     if (e.currentTarget.naturalWidth > 120) return
+    // Don't retry if we've already tried all sizes
+    if (attempt >= sizes.length - 1) return
     setAttempt(prev => Math.min(prev + 1, sizes.length - 1))
-  }, [sizes.length])
+  }, [sizes.length, attempt])
 
   if (!youtubeId) return null
 

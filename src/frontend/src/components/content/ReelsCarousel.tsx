@@ -5,6 +5,7 @@ import type { ReelsContent } from '@/types/api';
 import type { ReelItem } from '@/types/api';
 import { getYoutubeEmbedingUrl, getYoutubeId, getYoutubeTumbnailUrl } from '@/utils/YoutubeVideos';
 import YoutubeThumbnail from '@/components/shared/YoutubeThumbnail';
+import ImageWithSkeleton from '../shared/ImageWithSkeleton';
 
 export default function ReelsCarousel({ content }: { content: ReelsContent}) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -65,7 +66,6 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
               transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
               <YoutubeThumbnail
                 videoUrl={reel.video_url}
-                sizes={['hqdefault']}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* overlay */}
@@ -101,7 +101,7 @@ export default function ReelsCarousel({ content }: { content: ReelsContent}) {
                 allowFullScreen
               />
             ) : (
-              <img src={getYoutubeTumbnailUrl(activeReel.video_url)} className="w-full h-full object-cover" />
+              <ImageWithSkeleton src={getYoutubeTumbnailUrl(activeReel.video_url)} className="w-full h-full object-cover" />
             )}
             <button
               onClick={() => setActiveReel(null)}

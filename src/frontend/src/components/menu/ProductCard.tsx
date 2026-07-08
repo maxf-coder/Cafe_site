@@ -21,7 +21,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
-      <div className="aspect-square overflow-hidden rounded-t-squircle">
+      <div className="aspect-[4/3] overflow-hidden rounded-t-squircle">
         <ImageWithSkeleton
           src={product.img_src}
           alt={product.alt_text}
@@ -35,7 +35,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
       {/* Content */}
       <div className="p-4 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-heading font-semibold text-sm md:text-base text-foreground leading-tight">
+          <h3 className="font-heading font-semibold text-lg md:text-xl text-foreground leading-tight">
             {product.name}
           </h3>
         </div>

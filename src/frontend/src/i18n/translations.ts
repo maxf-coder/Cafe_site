@@ -24,6 +24,7 @@ export const translations = {
       schedule: 'Program de lucru',
       address: 'Adresa',
       social: 'Rețele sociale',
+      builtBy: "Construit de",
     },
     common: {
       showMore: 'Citește mai mult',
@@ -54,6 +55,7 @@ export const translations = {
       schedule: 'Work Schedule',
       address: 'Address',
       social: 'Social Media',
+      builtBy: "Built by",
     },
     common: {
       showMore: 'Read more',
@@ -84,6 +86,7 @@ export const translations = {
       schedule: 'Режим работы',
       address: 'Адрес',
       social: 'Социальные сети',
+      builtBy: "Создано",
     },
     common: {
       showMore: 'Читать далее',
