@@ -125,14 +125,19 @@ export default function Footer() {
                   </a>
                 )}
                 {settings.developer_email && (
-                  <a
-                    href={`https://mail.google.com/mail/?view=cm&fs=1&to=${settings.developer_email}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Email"
-                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
-                    <FaEnvelope className="w-4 h-4" />
-                  </a>
+                  <div className="flex justify-center">
+                    <a
+                      href={`mailto:${settings.developer_email}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-sm text-secondary-foreground/80
+                        hover:text-white hover:scale-105 transition-all duration-300
+                        bg-white/10 hover:bg-primary rounded-squircle px-4 py-2"
+                    >
+                      <FaEnvelope className="w-4 h-4" />
+                      {settings.developer_email}
+                    </a>
+                  </div>
                 )}
               </div>
             </div>
