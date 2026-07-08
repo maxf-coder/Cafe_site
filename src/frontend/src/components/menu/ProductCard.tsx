@@ -45,7 +45,7 @@ export default function ProductCard({ product, onClick }: ProductCardProps) {
         </p>
 
         <div className="flex items-center justify-between pt-1">
-          <span className="font-heading font-bold text-secondary text-lg">
+          <span className="font-heading font-bold text-secondary text-sm md:text-lg">
             {product.price} MDL
           </span>
           {product.weight_g && (
