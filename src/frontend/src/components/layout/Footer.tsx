@@ -110,35 +110,38 @@ export default function Footer() {
                   <span className="w-8 h-px bg-white/10" />
                 </div>
               )}
-
-              <div className="flex justify-center gap-3">
-                {settings.developer_github && (
-                  <a href={settings.developer_github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
-                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
-                    <FaGithub className="w-4 h-4" />
-                  </a>
-                )}
-                {settings.developer_linkedin && (
-                  <a href={settings.developer_linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
-                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
-                    <FaLinkedin className="w-4 h-4" />
-                  </a>
-                )}
-                {settings.developer_email && (
-                  <div className="flex justify-center">
-                    <a
-                      href={`mailto:${settings.developer_email}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm text-secondary-foreground/80
-                        hover:text-white hover:scale-105 transition-all duration-300
-                        bg-white/10 hover:bg-primary rounded-squircle px-4 py-2"
-                    >
-                      <FaEnvelope className="w-4 h-4" />
-                      {settings.developer_email}
+              <div className="flex flex-col md:flex-row justify-center gap-3">
+                <div className="flex justify-center gap-3">
+                  {settings.developer_github && (
+                    <a href={settings.developer_github} target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                      className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
+                      <FaGithub className="w-4 h-4" />
                     </a>
-                  </div>
-                )}
+                  )}
+                  {settings.developer_linkedin && (
+                    <a href={settings.developer_linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
+                      className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-secondary-foreground/60 hover:bg-primary hover:text-white hover:scale-110 transition-all duration-300">
+                      <FaLinkedin className="w-4 h-4" />
+                    </a>
+                  )}
+                </div>
+                <div className="flex justify-center gap-3">
+                  {settings.developer_email && (
+                    <div className="flex justify-center">
+                      <a
+                        href={`mailto:${settings.developer_email}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-secondary-foreground/80
+                          hover:text-white hover:scale-105 transition-all duration-300
+                          bg-white/10 hover:bg-primary rounded-squircle px-4 py-2"
+                      >
+                        <FaEnvelope className="w-4 h-4" />
+                        {settings.developer_email}
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
