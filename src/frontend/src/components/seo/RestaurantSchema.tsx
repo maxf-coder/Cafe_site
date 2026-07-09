@@ -39,9 +39,22 @@ export default function RestaurantSchema() {
     "openingHoursSpecification": []
   }
 
+  const navSchema = {
+    "@context": "https://schema.org",
+    "@type": "SiteNavigationElement",
+    "name": "Main Navigation",
+    "hasPart": [
+      { "@type": "SiteNavigationElement", "name": "Meniu", "url": `${SITE_URL}/` },
+      { "@type": "SiteNavigationElement", "name": "Despre Noi", "url": `${SITE_URL}/content/despre-noi` },
+      { "@type": "SiteNavigationElement", "name": "Evenimente", "url": `${SITE_URL}/content/evenimente-out-door` },
+      { "@type": "SiteNavigationElement", "name": "Caritate", "url": `${SITE_URL}/content/caritate` }
+    ]
+  }
+
   return (
     <Helmet>
       <script type="application/ld+json">{JSON.stringify(schema)}</script>
+      <script type="application/ld+json">{JSON.stringify(navSchema)}</script>
     </Helmet>
   )
 }

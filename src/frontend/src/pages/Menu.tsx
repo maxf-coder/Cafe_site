@@ -40,7 +40,7 @@ export default function Menu() {
   return (
     <>
       <SEOHelmet
-        title="Meniu"
+        title="Fiesta Gastro Cafe"
         description="Vezi meniul nostru complet cu preparate delicioase și băuturi răcoritoare."
         type="restaurant.menu"
       />

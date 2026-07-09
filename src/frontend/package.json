@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && node scripts/generate-seo.mjs && vite build",
+    "build": "tsc -b && node scripts/fetch-favicon.mjs && node scripts/generate-seo.mjs && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
