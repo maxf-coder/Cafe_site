@@ -1,5 +1,6 @@
 import { writeFileSync, readFileSync, existsSync, mkdirSync } from 'fs'
 import { resolve } from 'path'
+import sharp from 'sharp'
 
 const API_URL = process.env.VITE_API_URL || ''
 
@@ -31,7 +32,14 @@ async function main() {
 
     if (!imgResp.ok) throw new Error(`Failed to fetch logo image: HTTP ${imgResp.status}`)
 
-    const buffer = Buffer.from(await imgResp.arrayBuffer())
+    let buffer = Buffer.from(await imgResp.arrayBuffer())
+    const metadata = await sharp(buffer).metadata()
+    if (metadata.width && metadata.height && metadata.width !== metadata.height) {
+      const size = Math.min(metadata.width, metadata.height)
+      const left = Math.floor((metadata.width - size) / 2)
+      const top = Math.floor((metadata.height - size) / 2)
+      buffer = await sharp(buffer).extract({ left, top, width: size, height: size }).toBuffer()
+    }
     writeFileSync(logoPath, buffer)
     console.log(`Fetched favicon from backend → logo.png`)
   } catch (err) {
