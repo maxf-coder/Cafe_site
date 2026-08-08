@@ -12,6 +12,11 @@ src/frontend/
 ├── .dockerignore                # Excludes node_modules, .env from Docker build
 ├── Dockerfile                   # Multi-stage: node:22-alpine build → nginx:1.27-alpine serve
 ├── nginx.conf                   # Proxies /api/, /cafe-admin/, /static/ → backend:8000
+├── .env                         # Local dev env vars (not committed)
+├── .env.example                 # Template for VITE_API_URL / VITE_SITE_URL
+├── scripts/
+│   ├── fetch-favicon.mjs        # Build-time: download logo → public/images/logo.png (square-cropped)
+│   └── generate-seo.mjs         # Build-time: robots.txt + sitemap.xml from VITE_SITE_URL
 ├── index.html
 ├── package.json
 ├── vite.config.ts
@@ -108,6 +113,62 @@ All navigations are hardcoded in `Navbar.tsx`:
 - `/content/despre-noi` — About
 - `/content/evenimente-out-door` — Events
 - `/content/caritate` — Charity
+
+---
+
+## Docker & Docker Compose
+
+The frontend can run as a containerized production build served by nginx (used by `docker-compose.yml`, useful for a full-stack deploy on one host).
+
+### Dockerfile (`src/frontend/Dockerfile`)
+
+Multi-stage build:
+
+| Stage | Base image | What it does |
+|-------|-----------|--------------|
+| **build** | `node:22-alpine` | `npm ci`, copies the repo, sets `ARG VITE_API_URL` → `ENV VITE_API_URL`, runs `npm run build` (tsc + `fetch-favicon.mjs` + `generate-seo.mjs` + `vite build`) |
+| **serve** | `nginx:1.27-alpine` | Copies `dist/` → `/usr/share/nginx/html`, copies `nginx.conf` → `/etc/nginx/conf.d/default.conf`, exposes port 80 |
+
+The `VITE_API_URL` build arg is mandatory — without it the build fails (the API client throws at startup).
+
+### nginx.conf behavior
+
+| Location | Behavior |
+|----------|----------|
+| `/api/`, `/cafe-admin/`, `/static/` | Proxied to `backend:8000` (the compose service name) with X-Forwarded headers |
+| `= /index.html` | `Cache-Control: no-cache` — always fetches latest |
+| `~* ^(?!/static/).+\.(js\|css\|svg\|png\|jpg\|jpeg\|ico\|woff2?)$` | Hashed assets cached 1 year (`immutable`) |
+| `/` (catch-all) | `try_files $uri $uri/ /index.html` — SPA routing fallback (no 404 on client-side routes) |
+
+Also sets: `gzip` compression, security headers (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
+
+### docker-compose.yml (`frontend` service)
+
+```yaml
+frontend:
+  restart: unless-stopped
+  build:
+    context: ./src/frontend
+    args:
+      VITE_API_URL: /api/v1/     # relative → nginx proxies /api/ → backend:8000
+  ports:
+    - "80:80"
+  depends_on:
+    - backend
+```
+
+Key notes:
+- `VITE_API_URL` is a **relative** URL (`/api/v1/`) in the compose setup because nginx sits in front of the backend and proxies `/api/` → `backend:8000`.
+- The container talks to the backend via the compose network using the service name `backend`, no public IP needed.
+- SPA deep links (e.g. `/content/despre-noi`) work out of the box because of the `try_files ... /index.html` fallback.
+
+### Docker vs Render Static Site
+
+| | Docker + nginx | Render Static Site |
+|---|---|---|
+| API base URL | `/api/v1/` (proxied) | Full backend URL (direct, CORS) |
+| nginx control | Yes (custom config) | No (Render handles serving) |
+| SPA fallback | `try_files` in config | Requires a redirect/`_redirects` rule (`/* → /index.html`) |
 
 ---
 
@@ -396,10 +457,36 @@ fetchImages()           → GET site-images/
 
 ## Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `VITE_API_URL` | Backend API base URL (Vite bakes it into the bundle at build time) | (required — build fails if missing) |
-| `VITE_SITE_URL` | Canonical site URL for SEO (og:url, canonical, hreflang, sitemap) | Falls back to `window.location.origin` |
+The frontend uses Vite environment variables, defined in `src/frontend/.env` (dev) or set in the hosting platform (production). Vite **bakes them into the bundle at build time** — changing them requires a rebuild/redeploy.
+
+| Variable | Required | Purpose | Example |
+|----------|----------|---------|---------|
+| `VITE_API_URL` | ✅ Yes | Backend API base URL (must end with `/api/v1/`). Used by `api/client.ts` (axios `baseURL`). Build fails if missing. | `http://localhost:8000/api/v1/` (dev), `https://api.yourdomain.com/api/v1/` (prod) |
+| `VITE_SITE_URL` | Optional | Canonical site URL for SEO (`rel=canonical`, `og:url`, hreflang, sitemap.xml). Falls back to `window.location.origin` at runtime if unset. Also consumed by `generate-seo.mjs` at build time. | `https://www.yourdomain.com/` |
+
+### How `VITE_API_URL` is injected per environment
+
+| Environment | Where it comes from |
+|-------------|---------------------|
+| Local dev (`npm run dev`) | `.env` file → `http://localhost:8000/api/v1/` |
+| Docker Compose (local) | `docker-compose.yml` build arg `VITE_API_URL: /api/v1/` → nginx proxies `/api/` → backend |
+| Render Static Site | Render dashboard env var `VITE_API_URL` |
+
+### Build-time scripts (run inside `npm run build`)
+
+`package.json` build script chain (run BEFORE `vite build`):
+
+1. **`node scripts/fetch-favicon.mjs`** — fetches the site logo from the backend (`GET {VITE_API_URL}site-images/`), center-square-crops it via `sharp`, and writes `public/images/logo.png` (referenced by `index.html` as favicon). Falls back to copying `public/images/placeholderLogo.png` if the backend is unreachable. Skips with a warning if `VITE_API_URL` is unset.
+2. **`node scripts/generate-seo.mjs`** — writes `public/robots.txt` + `public/sitemap.xml` from `VITE_SITE_URL`. Skips with a warning (no files generated) if `VITE_SITE_URL` is unset.
+
+### .env / .env.example
+
+- `.env` — local dev file, gitignored
+- `.env.example` — committed template with comments:
+  ```
+  VITE_API_URL=http://localhost:8000/api/v1/
+  VITE_SITE_URL=
+  ```
 
 ---
 

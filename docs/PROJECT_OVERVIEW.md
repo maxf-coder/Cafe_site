@@ -122,6 +122,8 @@ The project runs in Docker Compose with 3 services (`db`, `backend`, `frontend`)
 - **Media**: Cloudflare R2 (S3-compatible object storage, signed URLs)
 - **Environment Variables**: `.env` files locally, Render dashboard in production
 
+> **Step-by-step production deploy** (Render + Neon + R2): see `docs/DEPLOYMENT_GUIDE.md`.
+
 ### Quick Start
 ```bash
 docker compose build

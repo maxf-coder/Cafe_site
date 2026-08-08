@@ -50,13 +50,15 @@ EOF
 docker compose build
 docker compose up -d
 
-# 5. Import data
+# 5. Import data (optional — mockup/demo records)
 docker compose cp cafe_data.json backend:/app/
 docker compose exec backend python manage.py loaddata cafe_data.json
 
 # 6. Create admin user
 docker compose exec backend python manage.py createsuperuser
 ```
+
+> ⚠️ `cafe_data.json` is **mockup data** — it references signed image URLs that don't exist in R2, so every product image must be re-uploaded in the admin afterwards. Skipping it is fine.
 
 The site is now available at http://localhost.
 
@@ -96,7 +98,7 @@ uv sync --group dev
 # 4. Apply migrations
 uv run python manage.py migrate
 
-# 5. Import data
+# 5. Import data (optional — mockup/demo data)
 uv run python manage.py loaddata cafe_data.json
 
 # 6. Create admin user
@@ -132,7 +134,7 @@ Before the frontend works fully, you need to create records in the admin panel:
 | **Page** `/evenimente-out-door/` | Events page | slug: `evenimente-out-door` |
 | **Page** `/caritate/` | Charity page | slug: `caritate` |
 
-See `docs/ADMIN_GUIDE.md` for step-by-step instructions.
+See `docs/ADMIN_GUIDE.md` for step-by-step instructions, or skip straight to production with `docs/DEPLOYMENT_GUIDE.md` (Render + Neon + R2).
 
 ## Project Structure
 

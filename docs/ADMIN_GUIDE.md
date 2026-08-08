@@ -164,9 +164,9 @@ Added inline within a Category:
 - `alt_text` — translatable
 - `sort_order` — drag to reorder within category
 
-### Import Command
+### Import Command (optional mockup data)
 
-Instead of manually creating 50+ products, use the JSON fixture:
+> ⚠️ **`cafe_data.json` is mockup/demo data** — loading it is **optional**. It contains no superuser and references **signed R2 image URLs that do not exist in the bucket** — after the import you must re-upload every product image (`img_src`) via the admin. Skip the import if you want to create products manually (recommended for production).
 
 ```bash
 # Local dev
@@ -175,9 +175,12 @@ uv run python manage.py loaddata cafe_data.json
 # Docker Compose
 docker compose cp cafe_data.json backend:/app/
 docker compose exec backend python manage.py loaddata cafe_data.json
+
+# Against a remote DB (e.g. Neon), no Docker: run locally with DATABASE_* env vars
+# pointing at the remote database — see docs/DEPLOYMENT_GUIDE.md, Step 4.
 ```
 
-This creates 15 categories and 49 products with Romanian names, slugs, and signed R2 image URLs.
+If loaded, this creates 15 categories and 49 products with Romanian names and slugs. Create the admin account afterwards with `createsuperuser` (the fixture has none).
 
 ---
 
