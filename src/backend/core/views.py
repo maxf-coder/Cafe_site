@@ -46,7 +46,8 @@ class SiteImageView(ListAPIView):
 
 def health_check(request):
     try:
-        connection.ensure_connection()
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
         return JsonResponse({"status": "ok"})
     except Exception as e:
         return JsonResponse({"status": "error", "detail": str(e)}, status=500)
